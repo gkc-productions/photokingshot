@@ -1,0 +1,56 @@
+"use client";
+
+import { useActionState } from "react";
+import { createBookingInquiry } from "@/app/actions";
+import { serviceOptions } from "@/lib/site";
+
+const initialState = { ok: false, message: "" };
+
+export function BookingForm() {
+  const [state, formAction, pending] = useActionState(createBookingInquiry, initialState);
+
+  return (
+    <form action={formAction} className="grid gap-4 rounded-sm border border-white/10 bg-white/[0.04] p-5 md:grid-cols-2">
+      {state.message ? (
+        <div className={`md:col-span-2 rounded-sm border p-3 text-sm ${state.ok ? "border-[#d6a83f]/40 bg-[#d6a83f]/10 text-[#f4d98d]" : "border-red-400/40 bg-red-500/10 text-red-200"}`}>
+          {state.message}
+        </div>
+      ) : null}
+      <label className="text-sm font-semibold text-white/78">
+        Full name
+        <input name="fullName" required className="mt-2 w-full rounded-sm border border-white/10 px-3 py-3" />
+      </label>
+      <label className="text-sm font-semibold text-white/78">
+        Email
+        <input name="email" type="email" required className="mt-2 w-full rounded-sm border border-white/10 px-3 py-3" />
+      </label>
+      <label className="text-sm font-semibold text-white/78">
+        Phone
+        <input name="phone" required className="mt-2 w-full rounded-sm border border-white/10 px-3 py-3" />
+      </label>
+      <label className="text-sm font-semibold text-white/78">
+        Shoot type
+        <select name="shootType" required className="mt-2 w-full rounded-sm border border-white/10 px-3 py-3">
+          {serviceOptions.map((option) => (
+            <option key={option}>{option}</option>
+          ))}
+        </select>
+      </label>
+      <label className="text-sm font-semibold text-white/78">
+        Preferred date
+        <input name="preferredDate" type="date" className="mt-2 w-full rounded-sm border border-white/10 px-3 py-3" />
+      </label>
+      <label className="text-sm font-semibold text-white/78">
+        Location
+        <input name="location" required className="mt-2 w-full rounded-sm border border-white/10 px-3 py-3" />
+      </label>
+      <label className="text-sm font-semibold text-white/78 md:col-span-2">
+        Message
+        <textarea name="message" required rows={5} className="mt-2 w-full rounded-sm border border-white/10 px-3 py-3" />
+      </label>
+      <button disabled={pending} className="min-h-12 rounded-sm bg-[#d6a83f] px-5 py-3 text-sm font-black uppercase tracking-wide text-black hover:bg-white disabled:opacity-60 md:col-span-2">
+        {pending ? "Sending..." : "Submit Booking Inquiry"}
+      </button>
+    </form>
+  );
+}
