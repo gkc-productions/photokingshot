@@ -6,7 +6,15 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Blog",
-  description: "Published PhotoKingShot posts about Atlanta photography, sessions, galleries, and gear."
+  description: "Published PhotoKingShot posts about Atlanta photography, session preparation, galleries, and gear.",
+  alternates: {
+    canonical: "/blog"
+  },
+  openGraph: {
+    title: "Blog | PhotoKingShot",
+    description: "Photography notes, session prep, and gear thinking from PhotoKingShot.",
+    url: "https://photokingshot.com/blog"
+  }
 };
 
 export default async function BlogPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {

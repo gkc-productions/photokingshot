@@ -5,7 +5,15 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Gear",
-  description: "Amazon affiliate photography gear recommendations from GKC Productions / PhotoKingShot."
+  description: "Amazon affiliate photography gear recommendations from GKC Productions / PhotoKingShot.",
+  alternates: {
+    canonical: "/gear"
+  },
+  openGraph: {
+    title: "Gear | PhotoKingShot",
+    description: "Affiliate-compliant photography gear recommendations from GKC Productions / PhotoKingShot.",
+    url: "https://photokingshot.com/gear"
+  }
 };
 
 const fallbackProducts = [

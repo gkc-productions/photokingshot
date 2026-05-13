@@ -1,21 +1,26 @@
 import { requireAdmin } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
+import { DbNotice } from "@/components/DbNotice";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
   await requireAdmin();
-  const [inquiries, blogCount, productCount, portfolioCount] = await Promise.all([
+  const data = await Promise.all([
     prisma.bookingInquiry.findMany({ orderBy: { createdAt: "desc" }, take: 50 }),
     prisma.blogPost.count(),
     prisma.affiliateProduct.count(),
     prisma.portfolioItem.count()
-  ]);
+  ])
+    .then(([inquiries, blogCount, productCount, portfolioCount]) => ({ inquiries, blogCount, productCount, portfolioCount, hasDb: true }))
+    .catch(() => ({ inquiries: [], blogCount: 0, productCount: 0, portfolioCount: 0, hasDb: false }));
+  const { inquiries, blogCount, productCount, portfolioCount, hasDb } = data;
 
   return (
     <section className="section-shell py-10">
       <p className="eyebrow">Dashboard</p>
       <h1 className="mt-3 text-4xl font-black">Booking inquiries</h1>
+      {!hasDb ? <div className="mt-6"><DbNotice area="admin dashboard" /></div> : null}
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         <div className="rounded-sm border border-white/10 bg-white/[0.04] p-5"><p className="text-3xl font-black">{blogCount}</p><p className="text-white/60">Blog posts</p></div>
         <div className="rounded-sm border border-white/10 bg-white/[0.04] p-5"><p className="text-3xl font-black">{productCount}</p><p className="text-white/60">Affiliate products</p></div>

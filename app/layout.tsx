@@ -17,6 +17,11 @@ export const metadata: Metadata = {
     url: "https://photokingshot.com",
     siteName: "PhotoKingShot",
     type: "website"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PhotoKingShot by GKC Productions",
+    description: "Premium Atlanta-based photography with a bold, modern eye."
   }
 };
 

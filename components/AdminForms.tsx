@@ -49,7 +49,7 @@ export function PortfolioItemForm({ item }: { item?: PortfolioItem }) {
       <input type="hidden" name="id" value={item?.id || ""} />
       <label className={label}>Title<input name="title" required defaultValue={item?.title} className={input} /></label>
       <label className={label}>Category<input name="category" required defaultValue={item?.category || "Portraits"} className={input} /></label>
-      <label className={label}>Image URL<input name="imageUrl" type="url" required defaultValue={item?.imageUrl || "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1200&q=80"} className={input} /></label>
+      <label className={label}>Image URL<input name="imageUrl" type="url" required defaultValue={item?.imageUrl || "https://photokingshot.com/images/portfolio/placeholder.svg"} className={input} /></label>
       <label className={label}>Description<textarea name="description" required rows={5} defaultValue={item?.description} className={input} /></label>
       <label className="flex items-center gap-3 text-sm font-semibold text-white/78">
         <input type="hidden" name="isFeatured" value="false" />

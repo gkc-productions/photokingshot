@@ -18,27 +18,33 @@ export const serviceOptions = [
 
 export const placeholderPortfolio = [
   {
-    title: "Golden Hour Portraits",
+    title: "Westside Portrait Session",
     category: "Portraits",
-    imageUrl: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1200&q=80",
-    description: "Clean portrait sessions with polished color and confident direction."
+    imageUrl: "visual:portraits",
+    description: "Confident portraits with clean direction, rich contrast, and an Atlanta city feel."
   },
   {
-    title: "Atlanta Event Coverage",
+    title: "Community Celebration Coverage",
     category: "Events",
-    imageUrl: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1200&q=80",
-    description: "Candid moments, crowd energy, and key details from community events."
+    imageUrl: "visual:events",
+    description: "Candid coverage that catches arrivals, atmosphere, details, and the moments people talk about later."
   },
   {
-    title: "Graduation Sessions",
+    title: "Graduation Milestone Shoot",
     category: "Graduation",
-    imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80",
-    description: "Milestone images built for announcements, family, and social."
+    imageUrl: "visual:graduation",
+    description: "Polished cap-and-gown images built for family, announcements, and a proud next chapter."
   },
   {
-    title: "Editorial Looks",
+    title: "Church Anniversary Moments",
+    category: "Church/Community",
+    imageUrl: "visual:community",
+    description: "Respectful storytelling for worship, outreach, ministry milestones, and community gatherings."
+  },
+  {
+    title: "Editorial Brand Set",
     category: "Creative",
-    imageUrl: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=1200&q=80",
-    description: "Bold creative sets for artists, brands, and personal campaigns."
+    imageUrl: "visual:creative",
+    description: "Bold creative sets for artists, entrepreneurs, and campaigns that need a sharper visual voice."
   }
 ];

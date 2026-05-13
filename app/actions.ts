@@ -26,12 +26,19 @@ export async function createBookingInquiry(_: unknown, formData: FormData) {
     return { ok: false, message: "Please complete every required field with valid contact details." };
   }
 
-  await prisma.bookingInquiry.create({
-    data: {
-      ...parsed.data,
-      preferredDate: parsed.data.preferredDate ? new Date(parsed.data.preferredDate) : null
-    }
-  });
+  try {
+    await prisma.bookingInquiry.create({
+      data: {
+        ...parsed.data,
+        preferredDate: parsed.data.preferredDate ? new Date(parsed.data.preferredDate) : null
+      }
+    });
+  } catch {
+    return {
+      ok: false,
+      message: "The booking form is ready, but the database is not reachable yet. Please try again after production migrations are run."
+    };
+  }
 
   // Future: add SMTP/email notification logic here after sender domain and templates are configured.
   revalidatePath("/admin");

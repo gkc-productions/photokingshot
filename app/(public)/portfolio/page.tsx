@@ -7,20 +7,30 @@ import { placeholderPortfolio } from "@/lib/site";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Portfolio",
-  description: "PhotoKingShot portfolio preview with portraits, events, graduations, and creative photography."
+  description: "Explore PhotoKingShot portfolio categories for portraits, events, graduation, church/community, and creative photography.",
+  alternates: {
+    canonical: "/portfolio"
+  },
+  openGraph: {
+    title: "Portfolio | PhotoKingShot",
+    description: "Premium Atlanta photography portfolio organized by shoot type.",
+    url: "https://photokingshot.com/portfolio"
+  }
 };
+
+const categoryOrder = ["Portraits", "Events", "Graduation", "Church/Community", "Creative"];
 
 export default async function PortfolioPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
   const params = await searchParams;
   const items = await prisma.portfolioItem.findMany({ orderBy: { createdAt: "desc" } }).catch(() => []);
   const source = items.length ? items : placeholderPortfolio;
-  const categories = ["All", ...Array.from(new Set(source.map((item) => item.category)))];
+  const categories = ["All", ...categoryOrder];
   const selected = params.category || "All";
   const filtered = selected === "All" ? source : source.filter((item) => item.category === selected);
 
   return (
     <section className="section-shell py-16 md:py-24">
-      <SectionHeading eyebrow="Portfolio" title="A flexible gallery structure ready for future uploads." body="Filter by category now; later, uploaded work can be managed directly from the admin dashboard." />
+      <SectionHeading eyebrow="Portfolio" title="A polished gallery structure for PhotoKingShot work." body="Browse by shoot type. The placeholders are designed to stay visually clean until real client-approved images are uploaded from admin." />
       <div className="mt-8 flex flex-wrap gap-2">
         {categories.map((category) => (
           <a key={category} href={category === "All" ? "/portfolio" : `/portfolio?category=${encodeURIComponent(category)}`} className={`rounded-sm border px-4 py-2 text-sm font-bold ${selected === category ? "border-[#d6a83f] bg-[#d6a83f] text-black" : "border-white/15 text-white/76 hover:border-[#d6a83f]"}`}>
@@ -31,6 +41,7 @@ export default async function PortfolioPage({ searchParams }: { searchParams: Pr
       <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((item) => <PortfolioCard key={item.title} {...item} />)}
       </div>
+      {!filtered.length ? <p className="mt-10 text-white/60">No items in this category yet. Add portfolio work from admin when client-approved images are ready.</p> : null}
     </section>
   );
 }

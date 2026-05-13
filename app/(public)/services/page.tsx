@@ -4,7 +4,15 @@ import { SectionHeading } from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
   title: "Services",
-  description: "Portrait, event, graduation, church, community, and creative photography services in Atlanta."
+  description: "Portrait, event, graduation, church/community, and creative editorial photography services in Atlanta.",
+  alternates: {
+    canonical: "/services"
+  },
+  openGraph: {
+    title: "Photography Services | PhotoKingShot",
+    description: "Premium Atlanta photography services by PhotoKingShot and GKC Productions.",
+    url: "https://photokingshot.com/services"
+  }
 };
 
 const services = [
@@ -28,7 +36,7 @@ export default function ServicesPage() {
           </article>
         ))}
       </div>
-      <Button href="/book" className="mt-10">Book a Shoot</Button>
+      <Button href="/booking" className="mt-10">Book a Shoot</Button>
     </section>
   );
 }

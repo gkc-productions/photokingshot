@@ -5,7 +5,15 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Learn about PhotoKingShot, the photography brand of GKC Productions in Atlanta."
+  description: "Learn about PhotoKingShot, the Atlanta photography brand of GKC Productions.",
+  alternates: {
+    canonical: "/about"
+  },
+  openGraph: {
+    title: "About PhotoKingShot",
+    description: "PhotoKingShot is the Atlanta-based photography brand of GKC Productions.",
+    url: "https://photokingshot.com/about"
+  }
 };
 
 export default function AboutPage() {
@@ -14,7 +22,7 @@ export default function AboutPage() {
       <div>
         <SectionHeading eyebrow="About" title={`${site.name} is the photography brand of ${site.parent}.`} body="Built in Atlanta with a focus on premium images, honest direction, and a final gallery people are proud to share." />
         <p className="mt-6 text-lg leading-8 text-white/72">The work sits between polished production and personal presence: portraits that feel confident, event coverage that respects the room, graduation sessions that carry the weight of the milestone, and community photography that keeps people at the center.</p>
-        <Button href="/book" className="mt-8">Start a Booking</Button>
+        <Button href="/booking" className="mt-8">Start a Booking</Button>
       </div>
       <div className="photo-sheen min-h-[420px] rounded-sm border border-white/10 p-7">
         <p className="eyebrow">Atlanta-based</p>
