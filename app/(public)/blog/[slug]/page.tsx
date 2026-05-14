@@ -25,7 +25,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <p className="eyebrow">{post.category}</p>
       <h1 className="mt-4 text-4xl font-black tracking-tight md:text-6xl">{post.title}</h1>
       <p className="muted-copy mt-5 text-lg leading-8">{post.excerpt}</p>
-      {post.hasAffiliateLinks ? <p className="gold-notice mt-5 rounded-sm p-3 text-sm">This post may contain affiliate links.</p> : null}
       <div className="mt-10 whitespace-pre-wrap text-lg leading-9 text-[var(--foreground)]">{post.content}</div>
     </article>
   );

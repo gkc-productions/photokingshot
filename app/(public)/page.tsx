@@ -102,7 +102,7 @@ export default async function HomePage() {
       <section className="section-shell grid gap-5 pb-20 md:grid-cols-3">
         {[
           ["Client Galleries", "Edited galleries are delivered securely online with a clean path for clients to view and download.", "/galleries", "Gallery Delivery"],
-          ["Gear + Blog", "Photography tools, session prep notes, and affiliate-compliant gear recommendations.", "/gear", "Resources"],
+          ["Gear + Blog", "Photography tools, session prep notes, and practical equipment recommendations.", "/gear", "Resources"],
           ["Ready to Shoot?", "Tell us the date, location, and creative direction. PhotoKingShot will help shape the session.", "/booking", "Booking"]
         ].map(([title, body, href]) => (
           <div key={title} className="photo-sheen rounded-sm border border-[var(--border)] p-7">

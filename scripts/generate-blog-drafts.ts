@@ -30,8 +30,8 @@ const templates = [
   {
     title: "Camera Gear Worth Considering for Better Low-Light Photos",
     category: "Gear",
-    excerpt: "A draft affiliate-friendly gear article placeholder for low-light event and portrait photography.",
-    content: "Draft outline:\n\n- Fast lenses\n- Portable lighting\n- Stabilization\n- Memory cards\n- Manual affiliate link placement"
+    excerpt: "A draft gear article placeholder for low-light event and portrait photography.",
+    content: "Draft outline:\n\n- Fast lenses\n- Portable lighting\n- Stabilization\n- Memory cards\n- Practical setup notes"
   },
   {
     title: "How Churches and Community Groups Can Plan Photo Coverage",
@@ -57,7 +57,7 @@ async function main() {
       ...post,
       slug: `${slugify(post.title)}-${runId}-${index + 1}`,
       status: "DRAFT",
-      hasAffiliateLinks: post.category === "Gear"
+      hasAffiliateLinks: false
     }))
   });
 

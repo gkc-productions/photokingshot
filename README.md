@@ -75,7 +75,7 @@ Admin can:
 - View booking inquiries
 - Create, edit, and delete blog posts
 - Mark blog posts as `DRAFT` or `PUBLISHED`
-- Create, edit, and delete affiliate products
+- Create, edit, and delete gear recommendations
 - Create, edit, and delete portfolio items
 
 ## Ubuntu + Nginx + PM2 Deployment Notes

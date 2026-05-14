@@ -14,10 +14,10 @@ export default async function AdminGearPage() {
   return (
     <section className="section-shell py-10">
       <div className="flex items-center justify-between gap-4">
-        <div><p className="eyebrow">Admin</p><h1 className="mt-3 text-4xl font-black">Affiliate products</h1></div>
-        <Link href="/admin/gear/new" className="gold-button rounded-sm px-4 py-3 text-sm font-black">New Product</Link>
+        <div><p className="eyebrow">Admin</p><h1 className="mt-3 text-4xl font-black">Gear recommendations</h1></div>
+        <Link href="/admin/gear/new" className="gold-button rounded-sm px-4 py-3 text-sm font-black">New Gear Item</Link>
       </div>
-      {!result.hasDb ? <div className="mt-6"><DbNotice area="affiliate product admin" /></div> : null}
+      {!result.hasDb ? <div className="mt-6"><DbNotice area="gear recommendation admin" /></div> : null}
       <div className="mt-8 grid gap-4">
         {result.products.map((product) => (
           <article key={product.id} className="surface-card rounded-sm p-5">

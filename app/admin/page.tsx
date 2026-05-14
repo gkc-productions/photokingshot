@@ -23,7 +23,7 @@ export default async function AdminDashboardPage() {
       {!hasDb ? <div className="mt-6"><DbNotice area="admin dashboard" /></div> : null}
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         <div className="surface-card rounded-sm p-5"><p className="text-3xl font-black">{blogCount}</p><p className="muted-copy">Blog posts</p></div>
-        <div className="surface-card rounded-sm p-5"><p className="text-3xl font-black">{productCount}</p><p className="muted-copy">Affiliate products</p></div>
+        <div className="surface-card rounded-sm p-5"><p className="text-3xl font-black">{productCount}</p><p className="muted-copy">Gear recommendations</p></div>
         <div className="surface-card rounded-sm p-5"><p className="text-3xl font-black">{portfolioCount}</p><p className="muted-copy">Portfolio items</p></div>
       </div>
       <div className="mt-8 overflow-x-auto rounded-sm border border-[var(--border)]">

@@ -43,7 +43,6 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
             <p className="eyebrow">{post.category}</p>
             <h2 className="mt-3 text-2xl font-black">{post.title}</h2>
             <p className="muted-copy mt-3 leading-7">{post.excerpt}</p>
-            {post.hasAffiliateLinks ? <p className="mt-4 text-xs text-[var(--gold)]">Contains affiliate links.</p> : null}
           </Link>
         ))}
       </div>

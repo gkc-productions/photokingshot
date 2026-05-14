@@ -17,7 +17,7 @@ export function BlogPostForm({ post }: { post?: BlogPost }) {
       <label className="flex items-center gap-3 text-sm font-semibold text-[var(--muted)]">
         <input type="hidden" name="hasAffiliateLinks" value="false" />
         <input type="checkbox" name="hasAffiliateLinks" value="true" defaultChecked={post?.hasAffiliateLinks} className="h-4 w-4" />
-        Has affiliate links
+        Contains product links
       </label>
       <button className="gold-button min-h-12 rounded-sm px-5 py-3 text-sm font-black uppercase tracking-wide">Save Post</button>
     </form>
@@ -32,7 +32,7 @@ export function AffiliateProductForm({ product }: { product?: AffiliateProduct }
       <label className={label}>Category<input name="category" required defaultValue={product?.category || "Camera Gear"} className={input} /></label>
       <label className={label}>Best for<input name="bestFor" required defaultValue={product?.bestFor} className={input} /></label>
       <label className={label}>Description<textarea name="description" required rows={5} defaultValue={product?.description} className={input} /></label>
-      <label className={label}>Affiliate URL<input name="affiliateUrl" type="url" required defaultValue={product?.affiliateUrl || "https://www.amazon.com/"} className={input} /></label>
+      <label className={label}>Reference URL<input name="affiliateUrl" type="url" required defaultValue={product?.affiliateUrl || "https://photokingshot.com/gear"} className={input} /></label>
       <label className="flex items-center gap-3 text-sm font-semibold text-[var(--muted)]">
         <input type="hidden" name="isActive" value="false" />
         <input type="checkbox" name="isActive" value="true" defaultChecked={product?.isActive ?? true} className="h-4 w-4" />

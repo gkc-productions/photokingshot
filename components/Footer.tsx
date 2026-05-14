@@ -12,11 +12,9 @@ export function Footer() {
           <p className="mt-3">
             <a href={`mailto:${site.contactEmail}`} className="font-semibold text-[var(--gold)] hover:text-[var(--foreground)]">{site.contactEmail}</a>
           </p>
-          <p className="mt-4 text-xs text-[var(--muted)]">As an Amazon Associate, GKC Productions / PhotoKingShot earns from qualifying purchases.</p>
         </div>
         <div className="flex flex-wrap gap-4 text-[var(--muted)] md:justify-end">
           <Link href="/privacy-policy" className="hover:text-[var(--gold)]">Privacy Policy</Link>
-          <Link href="/affiliate-disclosure" className="hover:text-[var(--gold)]">Affiliate Disclosure</Link>
           <Link href="/booking" className="hover:text-[var(--gold)]">Book a Shoot</Link>
           <Link href="/admin" className="hover:text-[var(--gold)]">Admin</Link>
         </div>

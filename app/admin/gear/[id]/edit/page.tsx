@@ -11,8 +11,8 @@ export default async function EditAffiliateProductPage({ params }: { params: Pro
   const { id } = await params;
   const product = await prisma.affiliateProduct.findUnique({ where: { id } }).catch(() => "DB_ERROR" as const);
   if (product === "DB_ERROR") {
-    return <section className="section-shell max-w-3xl py-10"><p className="eyebrow">Admin</p><h1 className="mt-3 mb-8 text-4xl font-black">Edit affiliate product</h1><DbNotice area="affiliate product editor" /></section>;
+    return <section className="section-shell max-w-3xl py-10"><p className="eyebrow">Admin</p><h1 className="mt-3 mb-8 text-4xl font-black">Edit gear recommendation</h1><DbNotice area="gear recommendation editor" /></section>;
   }
   if (!product) notFound();
-  return <section className="section-shell max-w-3xl py-10"><p className="eyebrow">Admin</p><h1 className="mt-3 mb-8 text-4xl font-black">Edit affiliate product</h1><AffiliateProductForm product={product} /></section>;
+  return <section className="section-shell max-w-3xl py-10"><p className="eyebrow">Admin</p><h1 className="mt-3 mb-8 text-4xl font-black">Edit gear recommendation</h1><AffiliateProductForm product={product} /></section>;
 }
