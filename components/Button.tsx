@@ -4,7 +4,7 @@ import { clsx } from "clsx";
 type ButtonProps = {
   href: string;
   children: React.ReactNode;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "heroOutline";
   className?: string;
 };
 
@@ -16,7 +16,9 @@ export function Button({ href, children, variant = "primary", className }: Butto
         "inline-flex min-h-11 items-center justify-center rounded-sm px-5 py-3 text-center text-sm font-bold uppercase tracking-wide transition",
         variant === "primary"
           ? "gold-button"
-          : "border border-[var(--border)] text-[var(--foreground)] hover:border-[var(--gold)] hover:text-[var(--gold)]",
+          : variant === "heroOutline"
+            ? "border border-white/30 text-white hover:border-[var(--gold)] hover:text-[var(--gold)]"
+            : "border border-[var(--border)] text-[var(--foreground)] hover:border-[var(--gold)] hover:text-[var(--gold)]",
         className
       )}
     >

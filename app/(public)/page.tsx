@@ -39,7 +39,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative min-h-[calc(100vh-64px)] overflow-hidden">
+      <section className="relative min-h-[calc(100vh-64px)] overflow-hidden text-white">
         <div className="absolute inset-0 bg-[#050505]">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(217,169,59,0.22),transparent_30%),linear-gradient(110deg,#050505_0%,#050505_48%,rgba(217,169,59,0.18)_100%)]" />
           <div className="absolute right-[-7rem] top-20 hidden aspect-square w-[42rem] rounded-full border border-[#d6a83f]/20 md:block" />
@@ -52,12 +52,12 @@ export default async function HomePage() {
         </div>
         <div className="section-shell relative flex min-h-[calc(100vh-64px)] items-center py-20">
           <div className="max-w-4xl">
-            <p className="eyebrow">{site.fullName}</p>
-            <h1 className="mt-5 text-5xl font-black leading-[0.95] tracking-tight md:text-8xl">Atlanta photography with presence, polish, and power.</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/72">Portraits, events, graduations, church moments, and creative shoots built with a premium eye and a grounded production process.</p>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--gold)]">{site.fullName}</p>
+            <h1 className="mt-5 text-5xl font-black leading-[0.95] tracking-tight text-white md:text-8xl">Atlanta photography with presence, polish, and power.</h1>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/78">Portraits, events, graduations, church moments, and creative shoots built with a premium eye and a grounded production process.</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button href="/booking">Book a Shoot</Button>
-              <Button href="/portfolio" variant="secondary" className="border-white/25 text-white hover:border-[var(--gold)] hover:text-[var(--gold)]">View Portfolio</Button>
+              <Button href="/portfolio" variant="heroOutline">View Portfolio</Button>
             </div>
           </div>
         </div>
