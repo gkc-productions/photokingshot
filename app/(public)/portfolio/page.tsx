@@ -33,7 +33,7 @@ export default async function PortfolioPage({ searchParams }: { searchParams: Pr
       <SectionHeading eyebrow="Portfolio" title="A polished gallery structure for PhotoKingShot work." body="Browse by shoot type. The placeholders are designed to stay visually clean until real client-approved images are uploaded from admin." />
       <div className="mt-8 flex flex-wrap gap-2">
         {categories.map((category) => (
-          <a key={category} href={category === "All" ? "/portfolio" : `/portfolio?category=${encodeURIComponent(category)}`} className={`rounded-sm border px-4 py-2 text-sm font-bold ${selected === category ? "border-[#d6a83f] bg-[#d6a83f] text-black" : "border-white/15 text-white/76 hover:border-[#d6a83f]"}`}>
+          <a key={category} href={category === "All" ? "/portfolio" : `/portfolio?category=${encodeURIComponent(category)}`} className={`rounded-sm border px-4 py-2 text-sm font-bold ${selected === category ? "border-[var(--gold)] bg-[var(--gold)] text-[var(--gold-foreground)]" : "border-[var(--border)] text-[var(--muted)] hover:border-[var(--gold)] hover:text-[var(--gold)]"}`}>
             {category}
           </a>
         ))}
@@ -41,7 +41,7 @@ export default async function PortfolioPage({ searchParams }: { searchParams: Pr
       <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((item) => <PortfolioCard key={item.title} {...item} />)}
       </div>
-      {!filtered.length ? <p className="mt-10 text-white/60">No items in this category yet. Add portfolio work from admin when client-approved images are ready.</p> : null}
+      {!filtered.length ? <p className="muted-copy mt-10">No items in this category yet. Add portfolio work from admin when client-approved images are ready.</p> : null}
     </section>
   );
 }

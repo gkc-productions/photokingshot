@@ -32,22 +32,22 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
       <SectionHeading eyebrow="Blog" title="Photography notes, session prep, and gear thinking." body="Only published posts appear on the public site. Drafts stay in admin until they are ready." />
       <div className="mt-8 flex flex-wrap gap-2">
         {categories.map((category) => (
-          <a key={category} href={category === "All" ? "/blog" : `/blog?category=${encodeURIComponent(category)}`} className={`rounded-sm border px-4 py-2 text-sm font-bold ${selected === category ? "border-[#d6a83f] bg-[#d6a83f] text-black" : "border-white/15 text-white/76 hover:border-[#d6a83f]"}`}>
+          <a key={category} href={category === "All" ? "/blog" : `/blog?category=${encodeURIComponent(category)}`} className={`rounded-sm border px-4 py-2 text-sm font-bold ${selected === category ? "border-[var(--gold)] bg-[var(--gold)] text-[var(--gold-foreground)]" : "border-[var(--border)] text-[var(--muted)] hover:border-[var(--gold)] hover:text-[var(--gold)]"}`}>
             {category}
           </a>
         ))}
       </div>
       <div className="mt-10 grid gap-5 md:grid-cols-2">
         {filtered.map((post) => (
-          <Link key={post.id} href={`/blog/${post.slug}`} className="rounded-sm border border-white/10 bg-white/[0.04] p-6 transition hover:border-[#d6a83f]/70">
+          <Link key={post.id} href={`/blog/${post.slug}`} className="surface-card rounded-sm p-6 transition hover:border-[var(--gold)]">
             <p className="eyebrow">{post.category}</p>
             <h2 className="mt-3 text-2xl font-black">{post.title}</h2>
-            <p className="mt-3 leading-7 text-white/68">{post.excerpt}</p>
-            {post.hasAffiliateLinks ? <p className="mt-4 text-xs text-[#d6a83f]">Contains affiliate links.</p> : null}
+            <p className="muted-copy mt-3 leading-7">{post.excerpt}</p>
+            {post.hasAffiliateLinks ? <p className="mt-4 text-xs text-[var(--gold)]">Contains affiliate links.</p> : null}
           </Link>
         ))}
       </div>
-      {!filtered.length ? <p className="mt-10 text-white/60">No published posts yet.</p> : null}
+      {!filtered.length ? <p className="muted-copy mt-10">No published posts yet.</p> : null}
     </section>
   );
 }

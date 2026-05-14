@@ -57,7 +57,7 @@ export default async function HomePage() {
             <p className="mt-6 max-w-2xl text-lg leading-8 text-white/72">Portraits, events, graduations, church moments, and creative shoots built with a premium eye and a grounded production process.</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button href="/booking">Book a Shoot</Button>
-              <Button href="/portfolio" variant="secondary">View Portfolio</Button>
+              <Button href="/portfolio" variant="secondary" className="border-white/25 text-white hover:border-[var(--gold)] hover:text-[var(--gold)]">View Portfolio</Button>
             </div>
           </div>
         </div>
@@ -67,16 +67,16 @@ export default async function HomePage() {
         <SectionHeading eyebrow="Featured services" title="Clean direction, bold images, reliable delivery." body="PhotoKingShot keeps the experience focused: strong planning, calm direction on set, and final images with enough polish to represent you well." />
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {services.map(([service, body]) => (
-            <div key={service} className="rounded-sm border border-white/10 bg-white/[0.04] p-5 transition hover:border-[#d6a83f]/60 hover:bg-white/[0.07]">
+            <div key={service} className="surface-card rounded-sm p-5 transition hover:border-[var(--gold)]">
               <p className="text-lg font-black">{service}</p>
-              <p className="mt-3 text-sm leading-6 text-white/62">{body}</p>
+              <p className="muted-copy mt-3 text-sm leading-6">{body}</p>
             </div>
           ))}
         </div>
         <Button href="/services" variant="secondary" className="mt-8">Explore Services</Button>
       </section>
 
-      <section className="border-y border-white/10 bg-white/[0.03] py-20">
+      <section className="theme-band border-y py-20">
         <div className="section-shell">
           <SectionHeading eyebrow="Portfolio preview" title="A sharper visual structure for real work as it is uploaded." body="The portfolio is organized by shoot type now, with clean placeholders that can be replaced through admin as final galleries are added." />
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -90,10 +90,10 @@ export default async function HomePage() {
         <SectionHeading eyebrow="Why PhotoKingShot" title="Premium does not have to feel distant." body="The work is polished, but the process stays personal. You get thoughtful planning, clear communication, and a photographer who knows how to move between portraits, moments, and the room around them." />
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {reasons.map(([title, body]) => (
-            <div key={title} className="rounded-sm border border-white/10 bg-black p-6">
-              <p className="text-4xl font-black text-[#d6a83f]">0{reasons.findIndex(([item]) => item === title) + 1}</p>
+            <div key={title} className="surface-card rounded-sm p-6">
+              <p className="text-4xl font-black text-[var(--gold)]">0{reasons.findIndex(([item]) => item === title) + 1}</p>
               <h2 className="mt-5 text-2xl font-black">{title}</h2>
-              <p className="mt-3 leading-7 text-white/65">{body}</p>
+              <p className="muted-copy mt-3 leading-7">{body}</p>
             </div>
           ))}
         </div>
@@ -105,10 +105,10 @@ export default async function HomePage() {
           ["Gear + Blog", "Photography tools, session prep notes, and affiliate-compliant gear recommendations.", "/gear", "Resources"],
           ["Ready to Shoot?", "Tell us the date, location, and creative direction. PhotoKingShot will help shape the session.", "/booking", "Booking"]
         ].map(([title, body, href]) => (
-          <div key={title} className="photo-sheen rounded-sm border border-white/10 p-7">
+          <div key={title} className="photo-sheen rounded-sm border border-[var(--border)] p-7">
             <p className="eyebrow">{href === "/booking" ? "Booking" : title}</p>
             <h2 className="text-2xl font-black">{title}</h2>
-            <p className="mt-3 min-h-14 text-white/68">{body}</p>
+            <p className="muted-copy mt-3 min-h-14">{body}</p>
             <Button href={href} className="mt-6">{href === "/booking" ? "Book a Shoot" : "Open"}</Button>
           </div>
         ))}

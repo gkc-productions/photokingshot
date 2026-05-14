@@ -21,9 +21,9 @@ export default function BookingPage() {
     <section className="section-shell grid gap-10 py-16 md:grid-cols-[0.9fr_1.1fr] md:py-24">
       <div>
         <SectionHeading eyebrow="Booking" title="Tell us what you are creating." body="Share the essentials and the team will follow up with next steps. Your inquiry is stored for admin review; email notifications can be added after SMTP is configured." />
-        <p className="mt-6 leading-7 text-white/68">
+        <p className="muted-copy mt-6 leading-7">
           Prefer email? Reach PhotoKingShot at{" "}
-          <a href={`mailto:${site.contactEmail}`} className="font-semibold text-[#d6a83f] hover:text-white">{site.contactEmail}</a>.
+          <a href={`mailto:${site.contactEmail}`} className="font-semibold text-[var(--gold)] hover:text-[var(--foreground)]">{site.contactEmail}</a>.
         </p>
       </div>
       <BookingForm />

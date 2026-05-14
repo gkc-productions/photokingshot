@@ -22,21 +22,21 @@ export default async function AdminDashboardPage() {
       <h1 className="mt-3 text-4xl font-black">Booking inquiries</h1>
       {!hasDb ? <div className="mt-6"><DbNotice area="admin dashboard" /></div> : null}
       <div className="mt-8 grid gap-4 md:grid-cols-3">
-        <div className="rounded-sm border border-white/10 bg-white/[0.04] p-5"><p className="text-3xl font-black">{blogCount}</p><p className="text-white/60">Blog posts</p></div>
-        <div className="rounded-sm border border-white/10 bg-white/[0.04] p-5"><p className="text-3xl font-black">{productCount}</p><p className="text-white/60">Affiliate products</p></div>
-        <div className="rounded-sm border border-white/10 bg-white/[0.04] p-5"><p className="text-3xl font-black">{portfolioCount}</p><p className="text-white/60">Portfolio items</p></div>
+        <div className="surface-card rounded-sm p-5"><p className="text-3xl font-black">{blogCount}</p><p className="muted-copy">Blog posts</p></div>
+        <div className="surface-card rounded-sm p-5"><p className="text-3xl font-black">{productCount}</p><p className="muted-copy">Affiliate products</p></div>
+        <div className="surface-card rounded-sm p-5"><p className="text-3xl font-black">{portfolioCount}</p><p className="muted-copy">Portfolio items</p></div>
       </div>
-      <div className="mt-8 overflow-x-auto rounded-sm border border-white/10">
+      <div className="mt-8 overflow-x-auto rounded-sm border border-[var(--border)]">
         <table className="w-full min-w-[900px] text-left text-sm">
-          <thead className="bg-white/[0.06] text-white">
+          <thead className="bg-[var(--card-strong)] text-[var(--foreground)]">
             <tr>
               {["Name", "Contact", "Shoot", "Date", "Location", "Status", "Message"].map((head) => <th key={head} className="p-3">{head}</th>)}
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/10 text-white/72">
+          <tbody className="divide-y divide-[var(--border)] text-[var(--muted)]">
             {inquiries.map((inquiry) => (
               <tr key={inquiry.id}>
-                <td className="p-3 font-semibold text-white">{inquiry.fullName}</td>
+                <td className="p-3 font-semibold text-[var(--foreground)]">{inquiry.fullName}</td>
                 <td className="p-3">{inquiry.email}<br />{inquiry.phone}</td>
                 <td className="p-3">{inquiry.shootType}</td>
                 <td className="p-3">{inquiry.preferredDate?.toLocaleDateString() || "Flexible"}</td>
@@ -48,7 +48,7 @@ export default async function AdminDashboardPage() {
           </tbody>
         </table>
       </div>
-      {!inquiries.length ? <p className="mt-6 text-white/60">No inquiries yet.</p> : null}
+      {!inquiries.length ? <p className="muted-copy mt-6">No inquiries yet.</p> : null}
     </section>
   );
 }

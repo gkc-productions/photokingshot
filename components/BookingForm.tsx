@@ -12,7 +12,7 @@ export function BookingForm() {
   return (
     <form action={formAction} className="grid gap-4 rounded-sm border border-[var(--border)] bg-[var(--card)] p-5 shadow-2xl shadow-black/20 md:grid-cols-2">
       {state.message ? (
-        <div className={`md:col-span-2 rounded-sm border p-3 text-sm ${state.ok ? "border-[#d6a83f]/40 bg-[#d6a83f]/10 text-[#f4d98d]" : "border-red-400/40 bg-red-500/10 text-red-200"}`}>
+        <div className={`md:col-span-2 rounded-sm border p-3 text-sm ${state.ok ? "gold-notice" : "border-red-400/40 bg-red-500/10 text-red-700 dark:text-red-200"}`}>
           {state.message}
         </div>
       ) : null}
@@ -48,7 +48,7 @@ export function BookingForm() {
         Message
         <textarea name="message" required rows={5} placeholder="Tell us the occasion, timing, look, and any must-have images." className="mt-2 w-full rounded-sm border border-[var(--border)] px-3 py-3" />
       </label>
-      <button disabled={pending} className="min-h-12 rounded-sm bg-[#d6a83f] px-5 py-3 text-sm font-black uppercase tracking-wide text-black hover:bg-white disabled:opacity-60 md:col-span-2">
+      <button disabled={pending} className="gold-button min-h-12 rounded-sm px-5 py-3 text-sm font-black uppercase tracking-wide disabled:opacity-60 md:col-span-2">
         {pending ? "Sending..." : "Submit Booking Inquiry"}
       </button>
     </form>

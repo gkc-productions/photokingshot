@@ -29,10 +29,10 @@ export default function ServicesPage() {
       <SectionHeading eyebrow="Services" title="Photography packages shaped for real people, real rooms, and real moments." body="Starting prices are placeholders for the first version and can be updated in admin or page copy as packages are finalized." />
       <div className="mt-12 grid gap-5 md:grid-cols-2">
         {services.map(([title, body, price]) => (
-          <article key={title} className="rounded-sm border border-white/10 bg-white/[0.04] p-6">
+          <article key={title} className="surface-card rounded-sm p-6">
             <p className="eyebrow">{price}</p>
             <h2 className="mt-3 text-2xl font-black">{title}</h2>
-            <p className="mt-3 leading-7 text-white/68">{body}</p>
+            <p className="muted-copy mt-3 leading-7">{body}</p>
           </article>
         ))}
       </div>

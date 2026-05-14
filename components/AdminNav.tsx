@@ -7,12 +7,12 @@ export function AdminNav() {
       <div className="section-shell flex flex-wrap items-center justify-between gap-4 py-4">
         <Link href="/admin" className="font-black">PhotoKingShot Admin</Link>
         <nav className="flex flex-wrap items-center gap-4 text-sm text-[var(--muted)]">
-          <Link href="/admin/blog" className="hover:text-[#d6a83f]">Blog</Link>
-          <Link href="/admin/gear" className="hover:text-[#d6a83f]">Gear</Link>
-          <Link href="/admin/portfolio" className="hover:text-[#d6a83f]">Portfolio</Link>
-          <Link href="/" className="hover:text-[#d6a83f]">Public site</Link>
+          <Link href="/admin/blog" className="hover:text-[var(--gold)]">Blog</Link>
+          <Link href="/admin/gear" className="hover:text-[var(--gold)]">Gear</Link>
+          <Link href="/admin/portfolio" className="hover:text-[var(--gold)]">Portfolio</Link>
+          <Link href="/" className="hover:text-[var(--gold)]">Public site</Link>
           <form action={logoutAdmin}>
-            <button className="hover:text-[#d6a83f]">Logout</button>
+            <button className="hover:text-[var(--gold)]">Logout</button>
           </form>
         </nav>
       </div>

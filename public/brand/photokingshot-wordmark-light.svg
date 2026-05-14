@@ -1,6 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="560" height="120" viewBox="0 0 560 120" role="img" aria-labelledby="title desc">
-  <title id="title">PhotoKingShot wordmark for light backgrounds</title>
-  <desc id="desc">PhotoKingShot wordmark in black and gold with GKC Productions subline.</desc>
-  <text x="0" y="56" fill="#050505" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="900">PhotoKing<tspan fill="#D9A93B">Shot</tspan></text>
-  <text x="3" y="95" fill="#D9A93B" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="800" letter-spacing="6">BY GKC PRODUCTIONS</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 318 78" role="img" aria-label="PhotoKingShot by GKC Productions">
+  <text x="0" y="35" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="900" letter-spacing="-1">
+    <tspan fill="#080808">PhotoKing</tspan><tspan fill="#C89423">Shot</tspan>
+  </text>
+  <path d="M2 47h246" stroke="#D9A93B" stroke-width="2" stroke-linecap="round"/>
+  <text x="2" y="68" fill="#B98213" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="800" letter-spacing="3.2">BY GKC PRODUCTIONS</text>
 </svg>

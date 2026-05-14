@@ -45,15 +45,15 @@ export default async function GearPage() {
   return (
     <section className="section-shell py-16 md:py-24">
       <SectionHeading eyebrow="Gear" title="Recommended tools for sharper shoots and smoother prep." body="Product links are manually added or pulled from an approved Amazon Associates method later. No fake reviews, no fake prices, and no Amazon scraping." />
-      <p className="mt-6 rounded-sm border border-[#d6a83f]/30 bg-[#d6a83f]/10 p-4 text-sm text-[#f4d98d]">As an Amazon Associate, GKC Productions / PhotoKingShot earns from qualifying purchases.</p>
+      <p className="gold-notice mt-6 rounded-sm p-4 text-sm">As an Amazon Associate, GKC Productions / PhotoKingShot earns from qualifying purchases.</p>
       <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {items.map((product) => (
-          <article key={product.title} className="rounded-sm border border-white/10 bg-white/[0.04] p-6">
+          <article key={product.title} className="surface-card rounded-sm p-6">
             <p className="eyebrow">{product.category}</p>
             <h2 className="mt-3 text-2xl font-black">{product.title}</h2>
-            <p className="mt-3 text-sm font-bold text-[#d6a83f]">Best for: {product.bestFor}</p>
-            <p className="mt-3 leading-7 text-white/68">{product.description}</p>
-            <a href={product.affiliateUrl} rel="nofollow sponsored noopener noreferrer" target="_blank" className="mt-6 inline-flex min-h-11 items-center rounded-sm bg-[#d6a83f] px-5 py-3 text-sm font-black uppercase tracking-wide text-black hover:bg-white">
+            <p className="mt-3 text-sm font-bold text-[var(--gold)]">Best for: {product.bestFor}</p>
+            <p className="muted-copy mt-3 leading-7">{product.description}</p>
+            <a href={product.affiliateUrl} rel="nofollow sponsored noopener noreferrer" target="_blank" className="gold-button mt-6 inline-flex min-h-11 items-center rounded-sm px-5 py-3 text-sm font-black uppercase tracking-wide">
               View Product
             </a>
           </article>

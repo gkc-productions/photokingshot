@@ -20,11 +20,11 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--background)]/95 backdrop-blur">
-      <div className="section-shell flex min-h-16 items-center justify-between gap-4 py-3">
+      <div className="section-shell flex min-h-16 items-center justify-between gap-4 py-2.5">
         <Link href="/" className="flex items-center gap-3 leading-tight" aria-label={`${site.fullName} home`}>
-          <img src={site.logo.fullDark} alt="" className="hidden h-12 w-auto sm:h-14 dark:sm:block" />
-          <img src={site.logo.fullLight} alt="" className="hidden h-12 w-auto sm:block sm:h-14 dark:hidden" />
-          <img src={site.logo.markGold} alt="" className="h-11 w-11 sm:hidden" />
+          <img src={site.logo.fullDark} alt="" className="hidden h-10 w-auto sm:h-11 dark:sm:block" />
+          <img src={site.logo.fullLight} alt="" className="hidden h-10 w-auto sm:block sm:h-11 dark:hidden" />
+          <img src={site.logo.markGold} alt="" className="h-9 w-9 sm:hidden" />
           <span className="sr-only">{site.fullName}</span>
           <span className="block sm:hidden">
             <span className="block text-base font-black tracking-wide text-[var(--foreground)]">{site.name}</span>
@@ -33,7 +33,7 @@ export function Header() {
         </Link>
         <nav className="hidden items-center gap-5 text-sm text-[var(--muted)] lg:flex">
           {nav.map(([label, href]) => (
-            <Link key={href} href={href} className="hover:text-[#d6a83f]">
+            <Link key={href} href={href} className="hover:text-[var(--gold)]">
               {label}
             </Link>
           ))}
@@ -42,7 +42,7 @@ export function Header() {
           <div className="hidden xl:block">
             <ThemeToggle />
           </div>
-          <Link href="/booking" className="hidden rounded-sm border border-[#d6a83f] bg-[#d6a83f] px-4 py-2 text-sm font-black uppercase tracking-wide text-black transition hover:bg-white sm:inline-flex">
+          <Link href="/booking" className="gold-button hidden rounded-sm border border-[var(--gold)] px-4 py-2 text-sm font-black uppercase tracking-wide transition sm:inline-flex">
             Book a Shoot
           </Link>
           <button
@@ -59,12 +59,12 @@ export function Header() {
       {open ? (
         <nav className="section-shell grid gap-2 border-t border-[var(--border)] py-4 lg:hidden">
           {nav.map(([label, href]) => (
-            <Link key={href} href={href} onClick={() => setOpen(false)} className="rounded-sm border border-[var(--border)] px-4 py-3 text-sm font-bold text-[var(--foreground)] hover:border-[#d6a83f] hover:text-[#d6a83f]">
+            <Link key={href} href={href} onClick={() => setOpen(false)} className="rounded-sm border border-[var(--border)] px-4 py-3 text-sm font-bold text-[var(--foreground)] hover:border-[var(--gold)] hover:text-[var(--gold)]">
               {label}
             </Link>
           ))}
           <ThemeToggle />
-          <Link href="/booking" onClick={() => setOpen(false)} className="rounded-sm bg-[#d6a83f] px-4 py-3 text-sm font-black uppercase tracking-wide text-black">
+          <Link href="/booking" onClick={() => setOpen(false)} className="gold-button rounded-sm px-4 py-3 text-sm font-black uppercase tracking-wide">
             Book a Shoot
           </Link>
         </nav>

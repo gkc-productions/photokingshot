@@ -19,7 +19,7 @@ export function BlogPostForm({ post }: { post?: BlogPost }) {
         <input type="checkbox" name="hasAffiliateLinks" value="true" defaultChecked={post?.hasAffiliateLinks} className="h-4 w-4" />
         Has affiliate links
       </label>
-      <button className="min-h-12 rounded-sm bg-[#d6a83f] px-5 py-3 text-sm font-black uppercase tracking-wide text-black hover:bg-white">Save Post</button>
+      <button className="gold-button min-h-12 rounded-sm px-5 py-3 text-sm font-black uppercase tracking-wide">Save Post</button>
     </form>
   );
 }
@@ -38,7 +38,7 @@ export function AffiliateProductForm({ product }: { product?: AffiliateProduct }
         <input type="checkbox" name="isActive" value="true" defaultChecked={product?.isActive ?? true} className="h-4 w-4" />
         Active on public gear page
       </label>
-      <button className="min-h-12 rounded-sm bg-[#d6a83f] px-5 py-3 text-sm font-black uppercase tracking-wide text-black hover:bg-white">Save Product</button>
+      <button className="gold-button min-h-12 rounded-sm px-5 py-3 text-sm font-black uppercase tracking-wide">Save Product</button>
     </form>
   );
 }
@@ -56,7 +56,7 @@ export function PortfolioItemForm({ item }: { item?: PortfolioItem }) {
         <input type="checkbox" name="isFeatured" value="true" defaultChecked={item?.isFeatured} className="h-4 w-4" />
         Feature on home page
       </label>
-      <button className="min-h-12 rounded-sm bg-[#d6a83f] px-5 py-3 text-sm font-black uppercase tracking-wide text-black hover:bg-white">Save Portfolio Item</button>
+      <button className="gold-button min-h-12 rounded-sm px-5 py-3 text-sm font-black uppercase tracking-wide">Save Portfolio Item</button>
     </form>
   );
 }
