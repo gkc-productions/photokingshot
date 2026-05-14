@@ -1,18 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 130" role="img" aria-label="PhotoKingShot by GKC Productions">
-  <g fill="none" stroke="#D9A93B" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M34 50h76" />
-    <path d="M24 54h96c8 0 13 5 13 13v40c0 8-5 13-13 13H24c-8 0-13-5-13-13V67c0-8 5-13 13-13Z" />
-    <path d="M34 54l11-16h54l11 16" />
-    <path d="M40 39l11-18 14 15 7-23 7 23 14-15 11 18" />
-    <path d="M47 46h50" />
-    <circle cx="72" cy="88" r="24" />
-    <circle cx="72" cy="88" r="8" />
-    <path d="M72 64l11 20M96 84l-22 1M84 109L72 88M60 109l11-21M48 84l22 4M60 67l12 21" />
-    <path d="M108 72h10" />
-  </g>
-  <text x="158" y="66" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="900" letter-spacing="-1.4">
-    <tspan fill="#FFFFFF">PhotoKing</tspan><tspan fill="#D9A93B">Shot</tspan>
-  </text>
-  <path d="M160 80h286" stroke="#D9A93B" stroke-width="2" stroke-linecap="round"/>
-  <text x="162" y="105" fill="#D9A93B" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="800" letter-spacing="4">BY GKC PRODUCTIONS</text>
+<svg width="360" height="110" viewBox="0 0 360 110" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">PhotoKingShot by GKC Productions</title>
+  <desc id="desc">Gold camera and crown mark with PhotoKingShot wordmark.</desc>
+
+  <defs>
+    <style>
+      .gold { stroke: #D9A93B; fill: none; }
+      .goldFill { fill: #D9A93B; }
+      .whiteFill { fill: #FFFFFF; }
+      .darkFill { fill: #111111; }
+      .word { font-family: Inter, Arial, Helvetica, sans-serif; font-weight: 800; letter-spacing: -1px; }
+      .sub { font-family: Inter, Arial, Helvetica, sans-serif; font-weight: 700; letter-spacing: 5px; }
+    </style>
+  </defs>
+
+  <!-- Camera body -->
+  <rect x="24" y="38" width="80" height="56" rx="13" class="gold" stroke-width="5"/>
+
+  <!-- Camera top line / flash block -->
+  <path d="M30 38H45L51 28H78L84 38H99" class="gold" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Crown -->
+  <path d="M48 27L60 10L72 27L84 10L96 27" class="gold" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M51 27H93" class="gold" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Small camera side details -->
+  <path d="M17 55H30" class="gold" stroke-width="5" stroke-linecap="round"/>
+  <path d="M90 54H98" class="gold" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Lens circle -->
+  <circle cx="64" cy="66" r="22" class="gold" stroke-width="5"/>
+
+  <!-- Aperture blades -->
+  <path d="M64 44V66L48 52" class="goldFill"/>
+  <path d="M82 54L64 66L68 45" class="goldFill"/>
+  <path d="M84 74L64 66L82 54" class="goldFill"/>
+  <path d="M64 88V66L84 74" class="goldFill"/>
+  <path d="M46 78L64 66L60 87" class="goldFill"/>
+  <path d="M44 58L64 66L46 78" class="goldFill"/>
+
+  <!-- Wordmark -->
+  <text x="125" y="59" class="word whiteFill" font-size="31">PhotoKing</text>
+  <text x="288" y="59" class="word goldFill" font-size="31">Shot</text>
+
+  <!-- Subline and divider -->
+  <text x="128" y="83" class="sub goldFill" font-size="10">BY GKC PRODUCTIONS</text>
+  <path d="M128 91H337" stroke="#D9A93B" stroke-width="2" stroke-linecap="round"/>
 </svg>

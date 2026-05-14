@@ -1,18 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="PhotoKingShot camera crown mark">
-  <g fill="none" stroke="#D9A93B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M30 43h60" />
-    <path d="M22 47h76c7 0 12 5 12 12v33c0 7-5 12-12 12H22c-7 0-12-5-12-12V59c0-7 5-12 12-12Z" />
-    <path d="M30 47l9-13h42l9 13" />
-    <path d="M34 34l9-15 11 13 6-18 6 18 11-13 9 15" />
-    <path d="M39 40h42" />
-    <circle cx="60" cy="76" r="20" />
-    <circle cx="60" cy="76" r="7" />
-    <path d="M60 56l9 16" />
-    <path d="M80 73l-18 1" />
-    <path d="M70 93l-10-17" />
-    <path d="M50 93l9-17" />
-    <path d="M40 73l18 3" />
-    <path d="M50 59l10 17" />
-    <path d="M88 61h9" />
+<svg width="110" height="110" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PhotoKingShot camera crown mark">
+  <g stroke="#D9A93B" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="24" y="38" width="80" height="56" rx="13" fill="none" stroke-width="5"/>
+    <path d="M30 38H45L51 28H78L84 38H99" fill="none" stroke-width="5"/>
+    <path d="M48 27L60 10L72 27L84 10L96 27" fill="none" stroke-width="5"/>
+    <path d="M51 27H93" fill="none" stroke-width="5"/>
+    <path d="M17 55H30" fill="none" stroke-width="5"/>
+    <path d="M90 54H98" fill="none" stroke-width="4"/>
+    <circle cx="64" cy="66" r="22" fill="none" stroke-width="5"/>
   </g>
+  <path d="M64 44V66L48 52" fill="#D9A93B"/>
+  <path d="M82 54L64 66L68 45" fill="#D9A93B"/>
+  <path d="M84 74L64 66L82 54" fill="#D9A93B"/>
+  <path d="M64 88V66L84 74" fill="#D9A93B"/>
+  <path d="M46 78L64 66L60 87" fill="#D9A93B"/>
+  <path d="M44 58L64 66L46 78" fill="#D9A93B"/>
 </svg>
