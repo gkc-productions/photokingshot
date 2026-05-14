@@ -1,10 +1,31 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
+  --background: #ffffff;
+  --foreground: #09090b;
+  --gold: #d9a93b;
+  --muted: #5f626d;
+  --card: #ffffff;
+  --card-strong: #f4f4f5;
+  --border: rgba(9, 9, 11, 0.14);
+  --input: #ffffff;
+  --input-foreground: #09090b;
+  --placeholder: #71717a;
+}
+
+.dark {
   --background: #050505;
   --foreground: #ffffff;
-  --gold: #d6a83f;
-  --muted: #a8a8a8;
+  --gold: #d9a93b;
+  --muted: #a1a1aa;
+  --card: #111111;
+  --card-strong: #181818;
+  --border: rgba(255, 255, 255, 0.12);
+  --input: #0f0f0f;
+  --input-foreground: #ffffff;
+  --placeholder: #a1a1aa;
 }
 
 * {
@@ -30,7 +51,29 @@ a {
 input,
 textarea,
 select {
-  color: #111111;
+  background: var(--input);
+  border-color: var(--border);
+  color: var(--input-foreground);
+  caret-color: var(--gold);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--placeholder);
+  opacity: 1;
+}
+
+select option {
+  background: var(--input);
+  color: var(--input-foreground);
+}
+
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: var(--input-foreground);
+  box-shadow: 0 0 0 1000px var(--input) inset;
+  transition: background-color 9999s ease-in-out 0s;
 }
 
 .gold-text {
@@ -52,7 +95,7 @@ select {
 
 .photo-sheen {
   background:
-    radial-gradient(circle at 22% 18%, rgba(214, 168, 63, 0.32), transparent 30%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.02)),
-    #111111;
+    radial-gradient(circle at 22% 18%, rgba(217, 169, 59, 0.28), transparent 30%),
+    linear-gradient(145deg, color-mix(in srgb, var(--foreground) 12%, transparent), color-mix(in srgb, var(--foreground) 2%, transparent)),
+    var(--card);
 }

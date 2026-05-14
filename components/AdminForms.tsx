@@ -1,12 +1,12 @@
 import type { AffiliateProduct, BlogPost, PortfolioItem } from "@prisma/client";
 import { upsertAffiliateProduct, upsertBlogPost, upsertPortfolioItem } from "@/app/actions";
 
-const input = "mt-2 w-full rounded-sm border border-white/10 px-3 py-3";
-const label = "text-sm font-semibold text-white/78";
+const input = "mt-2 w-full rounded-sm border border-[var(--border)] px-3 py-3";
+const label = "text-sm font-semibold text-[var(--muted)]";
 
 export function BlogPostForm({ post }: { post?: BlogPost }) {
   return (
-    <form action={upsertBlogPost} className="grid gap-4 rounded-sm border border-white/10 bg-white/[0.04] p-5">
+    <form action={upsertBlogPost} className="grid gap-4 rounded-sm border border-[var(--border)] bg-[var(--card)] p-5">
       <input type="hidden" name="id" value={post?.id || ""} />
       <label className={label}>Title<input name="title" required defaultValue={post?.title} className={input} /></label>
       <label className={label}>Slug<input name="slug" defaultValue={post?.slug} className={input} /></label>
@@ -14,7 +14,7 @@ export function BlogPostForm({ post }: { post?: BlogPost }) {
       <label className={label}>Content<textarea name="content" required rows={10} defaultValue={post?.content} className={input} /></label>
       <label className={label}>Category<input name="category" required defaultValue={post?.category || "Photography"} className={input} /></label>
       <label className={label}>Status<select name="status" defaultValue={post?.status || "DRAFT"} className={input}><option>DRAFT</option><option>PUBLISHED</option></select></label>
-      <label className="flex items-center gap-3 text-sm font-semibold text-white/78">
+      <label className="flex items-center gap-3 text-sm font-semibold text-[var(--muted)]">
         <input type="hidden" name="hasAffiliateLinks" value="false" />
         <input type="checkbox" name="hasAffiliateLinks" value="true" defaultChecked={post?.hasAffiliateLinks} className="h-4 w-4" />
         Has affiliate links
@@ -26,14 +26,14 @@ export function BlogPostForm({ post }: { post?: BlogPost }) {
 
 export function AffiliateProductForm({ product }: { product?: AffiliateProduct }) {
   return (
-    <form action={upsertAffiliateProduct} className="grid gap-4 rounded-sm border border-white/10 bg-white/[0.04] p-5">
+    <form action={upsertAffiliateProduct} className="grid gap-4 rounded-sm border border-[var(--border)] bg-[var(--card)] p-5">
       <input type="hidden" name="id" value={product?.id || ""} />
       <label className={label}>Product title<input name="title" required defaultValue={product?.title} className={input} /></label>
       <label className={label}>Category<input name="category" required defaultValue={product?.category || "Camera Gear"} className={input} /></label>
       <label className={label}>Best for<input name="bestFor" required defaultValue={product?.bestFor} className={input} /></label>
       <label className={label}>Description<textarea name="description" required rows={5} defaultValue={product?.description} className={input} /></label>
       <label className={label}>Affiliate URL<input name="affiliateUrl" type="url" required defaultValue={product?.affiliateUrl || "https://www.amazon.com/"} className={input} /></label>
-      <label className="flex items-center gap-3 text-sm font-semibold text-white/78">
+      <label className="flex items-center gap-3 text-sm font-semibold text-[var(--muted)]">
         <input type="hidden" name="isActive" value="false" />
         <input type="checkbox" name="isActive" value="true" defaultChecked={product?.isActive ?? true} className="h-4 w-4" />
         Active on public gear page
@@ -45,13 +45,13 @@ export function AffiliateProductForm({ product }: { product?: AffiliateProduct }
 
 export function PortfolioItemForm({ item }: { item?: PortfolioItem }) {
   return (
-    <form action={upsertPortfolioItem} className="grid gap-4 rounded-sm border border-white/10 bg-white/[0.04] p-5">
+    <form action={upsertPortfolioItem} className="grid gap-4 rounded-sm border border-[var(--border)] bg-[var(--card)] p-5">
       <input type="hidden" name="id" value={item?.id || ""} />
       <label className={label}>Title<input name="title" required defaultValue={item?.title} className={input} /></label>
       <label className={label}>Category<input name="category" required defaultValue={item?.category || "Portraits"} className={input} /></label>
       <label className={label}>Image URL<input name="imageUrl" type="url" required defaultValue={item?.imageUrl || "https://photokingshot.com/images/portfolio/placeholder.svg"} className={input} /></label>
       <label className={label}>Description<textarea name="description" required rows={5} defaultValue={item?.description} className={input} /></label>
-      <label className="flex items-center gap-3 text-sm font-semibold text-white/78">
+      <label className="flex items-center gap-3 text-sm font-semibold text-[var(--muted)]">
         <input type="hidden" name="isFeatured" value="false" />
         <input type="checkbox" name="isFeatured" value="true" defaultChecked={item?.isFeatured} className="h-4 w-4" />
         Feature on home page

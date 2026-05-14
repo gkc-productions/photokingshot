@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">PhotoKingShot gold camera crown mark</title>
+  <desc id="desc">Gold camera outline with a crown and aperture symbol.</desc>
+  <g fill="none" stroke="#D9A93B" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M69 92h24l16-20h38l16 20h24c16 0 29 13 29 29v62c0 16-13 29-29 29H69c-16 0-29-13-29-29v-62c0-16 13-29 29-29Z"/>
+    <path d="M83 70 103 42l25 28 25-28 20 28"/>
+    <path d="M91 70h74"/>
+    <circle cx="128" cy="151" r="42"/>
+    <path d="M128 109v84M92 151h72M99 124l58 54M157 124l-58 54"/>
+  </g>
+</svg>

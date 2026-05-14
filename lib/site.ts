@@ -6,7 +6,16 @@ export const site = {
   galleryDomain: "gallery.photokingshot.com",
   email: "admin@photokingshot.com",
   contactEmail: process.env.ADMIN_EMAIL || "admin@photokingshot.com",
-  city: "Atlanta"
+  city: "Atlanta",
+  logo: {
+    fullDark: "/brand/photokingshot-logo-full-dark.svg",
+    fullLight: "/brand/photokingshot-logo-full-light.svg",
+    markGold: "/brand/photokingshot-mark-gold.svg",
+    markWhite: "/brand/photokingshot-mark-white.svg",
+    wordmarkDark: "/brand/photokingshot-wordmark-dark.svg",
+    wordmarkLight: "/brand/photokingshot-wordmark-light.svg",
+    favicon: "/favicon.svg"
+  }
 };
 
 export const serviceOptions = [

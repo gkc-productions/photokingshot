@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { site } from "@/lib/site";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -22,13 +24,20 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "PhotoKingShot by GKC Productions",
     description: "Premium Atlanta-based photography with a bold, modern eye."
+  },
+  icons: {
+    icon: site.logo.favicon,
+    shortcut: site.logo.favicon,
+    apple: "/apple-touch-icon.svg"
   }
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }
