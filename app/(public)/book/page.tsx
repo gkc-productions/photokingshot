@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { BookingForm } from "@/components/BookingForm";
 import { SectionHeading } from "@/components/SectionHeading";
+import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Book a Shoot",
@@ -20,6 +21,10 @@ export default function BookingPage() {
     <section className="section-shell grid gap-10 py-16 md:grid-cols-[0.9fr_1.1fr] md:py-24">
       <div>
         <SectionHeading eyebrow="Booking" title="Tell us what you are creating." body="Share the essentials and the team will follow up with next steps. Your inquiry is stored for admin review; email notifications can be added after SMTP is configured." />
+        <p className="mt-6 leading-7 text-white/68">
+          Prefer email? Reach PhotoKingShot at{" "}
+          <a href={`mailto:${site.contactEmail}`} className="font-semibold text-[#d6a83f] hover:text-white">{site.contactEmail}</a>.
+        </p>
       </div>
       <BookingForm />
     </section>

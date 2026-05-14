@@ -4,7 +4,8 @@ export const site = {
   fullName: "PhotoKingShot by GKC Productions",
   domain: "photokingshot.com",
   galleryDomain: "gallery.photokingshot.com",
-  email: "booking@photokingshot.com",
+  email: "admin@photokingshot.com",
+  contactEmail: process.env.ADMIN_EMAIL || "admin@photokingshot.com",
   city: "Atlanta"
 };
 

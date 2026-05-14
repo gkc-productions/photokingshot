@@ -8,6 +8,9 @@ export function Footer() {
         <div>
           <p className="text-lg font-black text-white">{site.fullName}</p>
           <p className="mt-2 max-w-xl">Atlanta-based photography for portraits, events, graduations, church communities, and creative campaigns, built with a premium eye and a clean delivery process.</p>
+          <p className="mt-3">
+            <a href={`mailto:${site.contactEmail}`} className="font-semibold text-[#d6a83f] hover:text-white">{site.contactEmail}</a>
+          </p>
           <p className="mt-4 text-xs">As an Amazon Associate, GKC Productions / PhotoKingShot earns from qualifying purchases.</p>
         </div>
         <div className="flex flex-wrap gap-4 md:justify-end">

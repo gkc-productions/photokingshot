@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -14,7 +15,10 @@ export default function PrivacyPolicyPage() {
         <p>PhotoKingShot by GKC Productions collects information submitted through booking forms, including name, email, phone, shoot type, preferred date, location, and message.</p>
         <p>This information is used to respond to inquiries, plan sessions, manage client communication, and improve services. Booking data is stored in the website database and is not sold.</p>
         <p>Affiliate links may direct visitors to third-party websites such as Amazon. Those sites operate under their own privacy policies.</p>
-        <p>To request an update or deletion of submitted information, contact GKC Productions through the booking page.</p>
+        <p>
+          To request an update or deletion of submitted information, contact GKC Productions at{" "}
+          <a href={`mailto:${site.contactEmail}`} className="font-semibold text-[#d6a83f] hover:text-white">{site.contactEmail}</a>.
+        </p>
       </div>
     </section>
   );

@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { clearAdminSession, setAdminSession } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
+import { site } from "@/lib/site";
 
 const requiredString = z.string().trim().min(1);
 const formBoolean = z.preprocess((value) => value === "true" || value === "on", z.boolean());
@@ -40,7 +41,9 @@ export async function createBookingInquiry(_: unknown, formData: FormData) {
     };
   }
 
-  // Future: add SMTP/email notification logic here after sender domain and templates are configured.
+  // Future: if SMTP_HOST/SMTP_USER/SMTP_PASS are present, send an inquiry notification to site.contactEmail.
+  // The current official admin/contact inbox is configured as admin@photokingshot.com.
+  void site.contactEmail;
   revalidatePath("/admin");
   return { ok: true, message: "Your inquiry was received. PhotoKingShot will follow up soon." };
 }
