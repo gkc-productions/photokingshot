@@ -9,11 +9,11 @@ export const site = {
   city: "Atlanta",
   logo: {
     fullDark: "/brand/photokingshot-logo-full-dark.png",
-    fullLight: "/brand/photokingshot-logo-full-light.png",
+    fullLight: "/brand/photokingshot-logo-full-light-v2.png",
     markGold: "/brand/photokingshot-mark-gold.png",
     markWhite: "/brand/photokingshot-mark-white.png",
     wordmarkDark: "/brand/photokingshot-wordmark-dark.png",
-    wordmarkLight: "/brand/photokingshot-wordmark-light.png",
+    wordmarkLight: "/brand/photokingshot-wordmark-light-v2.png",
     favicon: "/favicon.png"
   }
 };
