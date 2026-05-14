@@ -8,13 +8,13 @@ export const site = {
   contactEmail: process.env.ADMIN_EMAIL || "admin@photokingshot.com",
   city: "Atlanta",
   logo: {
-    fullDark: "/brand/photokingshot-logo-full-dark.svg",
-    fullLight: "/brand/photokingshot-logo-full-light.svg",
-    markGold: "/brand/photokingshot-mark-gold.svg",
-    markWhite: "/brand/photokingshot-mark-white.svg",
-    wordmarkDark: "/brand/photokingshot-wordmark-dark.svg",
-    wordmarkLight: "/brand/photokingshot-wordmark-light.svg",
-    favicon: "/favicon.svg"
+    fullDark: "/brand/photokingshot-logo-full-dark.png",
+    fullLight: "/brand/photokingshot-logo-full-light.png",
+    markGold: "/brand/photokingshot-mark-gold.png",
+    markWhite: "/brand/photokingshot-mark-white.png",
+    wordmarkDark: "/brand/photokingshot-wordmark-dark.png",
+    wordmarkLight: "/brand/photokingshot-wordmark-light.png",
+    favicon: "/favicon.png"
   }
 };
 
