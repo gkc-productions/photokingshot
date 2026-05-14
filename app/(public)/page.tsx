@@ -40,9 +40,15 @@ export default async function HomePage() {
   return (
     <>
       <section className="relative min-h-[calc(100vh-64px)] overflow-hidden">
-        <div className="absolute inset-0">
-          <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1800&q=80" alt="Professional camera on a dark set" className="h-full w-full object-cover opacity-45" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/78 to-black/20" />
+        <div className="absolute inset-0 bg-[#050505]">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(217,169,59,0.22),transparent_30%),linear-gradient(110deg,#050505_0%,#050505_48%,rgba(217,169,59,0.18)_100%)]" />
+          <div className="absolute right-[-7rem] top-20 hidden aspect-square w-[42rem] rounded-full border border-[#d6a83f]/20 md:block" />
+          <div className="absolute right-16 top-1/2 hidden h-64 w-96 -translate-y-1/2 rounded-sm border border-white/10 bg-white/[0.03] shadow-2xl shadow-black/50 lg:block">
+            <img src={site.logo.markGold} alt="" className="absolute left-1/2 top-1/2 h-36 w-36 -translate-x-1/2 -translate-y-1/2 opacity-80" />
+            <div className="absolute left-8 top-8 h-20 w-14 border border-white/25" />
+            <div className="absolute bottom-8 right-8 h-20 w-20 rounded-full border border-[#d6a83f]/35" />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/82 to-black/30" />
         </div>
         <div className="section-shell relative flex min-h-[calc(100vh-64px)] items-center py-20">
           <div className="max-w-4xl">
