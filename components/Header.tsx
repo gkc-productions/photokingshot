@@ -39,7 +39,7 @@ export function Header() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <div className="hidden xl:block">
+          <div className="hidden lg:block">
             <ThemeToggle />
           </div>
           <Link href="/booking" className="gold-button hidden rounded-sm border border-[var(--gold)] px-4 py-2 text-sm font-black uppercase tracking-wide transition sm:inline-flex">
