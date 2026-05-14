@@ -22,8 +22,8 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--background)]/95 backdrop-blur">
       <div className="section-shell flex min-h-16 items-center justify-between gap-4 py-2.5">
         <Link href="/" className="flex items-center gap-3 leading-tight" aria-label={`${site.fullName} home`}>
-          <img src={site.logo.fullDark} alt="" className="hidden h-11 w-auto sm:h-12 dark:sm:block" />
-          <img src={site.logo.fullLight} alt="" className="hidden h-11 w-auto sm:block sm:h-12 dark:hidden" />
+          <img src={site.logo.fullDark} alt="" className="hidden h-10 w-auto sm:h-11 dark:sm:block" />
+          <img src={site.logo.fullLight} alt="" className="hidden h-10 w-auto sm:block sm:h-11 dark:hidden" />
           <img src={site.logo.markGold} alt="" className="h-10 w-10 sm:hidden" />
           <span className="sr-only">{site.fullName}</span>
           <span className="block sm:hidden">
