@@ -29,7 +29,7 @@ export async function setGalleryAccessCookie(gallery: GallerySessionInput) {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
-    path: `/galleries/${gallery.slug}`,
+    path: "/",
     maxAge: 60 * 60 * 24 * 14
   });
 }
