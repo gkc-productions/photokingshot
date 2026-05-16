@@ -13,6 +13,7 @@ dist/
 .cache/
 .local/
 .pm2/
+public/images/galleries/alexis-kofi-graduation/
 .DS_Store
 .vscode/
 npm-debug.log*
