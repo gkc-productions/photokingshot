@@ -58,6 +58,12 @@ export async function GET(_: Request, { params }: { params: Promise<{ slug: stri
   const allowed = await hasGalleryAccess(gallery);
   if (!allowed) return NextResponse.json({ error: "Gallery login required." }, { status: 401 });
   if (!gallery.allowDownloads) return NextResponse.json({ error: "Downloads are disabled for this gallery." }, { status: 403 });
+  if (gallery.images.length > 100) {
+    return NextResponse.json(
+      { error: "This gallery is too large for one-click ZIP export right now. Please download individual images." },
+      { status: 413 }
+    );
+  }
 
   const downloadableImages = gallery.images.filter((image) => image.originalKey || safeLocalGalleryPath(image.imageUrl));
   if (!downloadableImages.length) return NextResponse.json({ error: "No downloadable images are available for ZIP export yet." }, { status: 404 });

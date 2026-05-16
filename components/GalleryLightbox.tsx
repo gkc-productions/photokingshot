@@ -93,9 +93,12 @@ export function GalleryLightbox({ images, galleryTitle, downloadAllUrl, audioUrl
     <>
       <div className="mt-8 flex flex-wrap items-center gap-3">
         {downloadAllUrl && downloadableCount ? (
-          <a href={downloadAllUrl} className="gold-button inline-flex min-h-11 items-center rounded-sm px-5 py-3 text-sm font-black uppercase tracking-wide">
-            Download All
-          </a>
+          <div className="flex flex-col gap-2">
+            <a href={downloadAllUrl} className="gold-button inline-flex min-h-11 items-center rounded-sm px-5 py-3 text-sm font-black uppercase tracking-wide">
+              Download All
+            </a>
+            <p className="text-xs font-semibold text-[var(--muted)]">Download All may take a moment for large galleries.</p>
+          </div>
         ) : null}
         {audioUrl ? (
           <>
@@ -108,11 +111,11 @@ export function GalleryLightbox({ images, galleryTitle, downloadAllUrl, audioUrl
         ) : null}
       </div>
 
-      <div className="mt-10 columns-1 gap-4 sm:columns-2 lg:columns-3">
+      <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((image, index) => (
-          <figure key={image.id} className="group relative mb-4 break-inside-avoid overflow-hidden rounded-sm bg-black">
+          <figure key={image.id} className="group relative overflow-hidden rounded-sm bg-black shadow-xl shadow-black/10">
             <button type="button" onClick={() => open(index)} className="block w-full text-left" aria-label={`Open ${image.title || galleryTitle}`}>
-              <img src={image.thumbnailUrl} alt={image.title || image.caption || galleryTitle} loading="lazy" className="h-auto w-full bg-black object-cover transition duration-500 group-hover:scale-[1.025] group-hover:opacity-90" />
+              <img src={image.thumbnailUrl} alt={image.title || image.caption || galleryTitle} loading="lazy" className="aspect-[4/5] w-full bg-black object-cover transition duration-500 group-hover:scale-[1.025] group-hover:opacity-90" />
               <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent p-4 opacity-0 transition group-hover:opacity-100">
                 <span className="block text-sm font-black text-white">{image.title || "View image"}</span>
                 {image.caption ? <span className="mt-1 block text-xs text-white/70">{image.caption}</span> : null}

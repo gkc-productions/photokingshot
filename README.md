@@ -110,6 +110,8 @@ npm run gallery:upload-r2:alexis
 
 The script preserves originals for full-size downloads, generates 900px progressive JPEG thumbnails for fast grid loading, generates 2200px high-quality progressive JPEG previews for lightbox/slideshow viewing, then updates the existing `GalleryImage` rows with R2 object keys. Local `imageUrl` values stay in the database as a fallback.
 
+Authenticated thumbnail, preview, and individual download routes redirect to short-lived signed R2 URLs so Cloudflare/R2 serves the image bytes instead of the VM. `Download All` still uses server resources because it packages originals into a ZIP on demand; for very large galleries, prefer individual downloads or a prebuilt ZIP export.
+
 Optional sample seed:
 
 ```bash

@@ -46,7 +46,9 @@ export async function GET(
     const url = variant === "download"
       ? await createSignedR2DownloadUrl(r2Key, safeFilename(`${image.title || gallery.slug}-${image.id}.jpg`))
       : await createSignedR2ViewUrl(r2Key);
-    return NextResponse.redirect(url);
+    const response = NextResponse.redirect(url);
+    response.headers.set("Cache-Control", "private, max-age=300");
+    return response;
   }
 
   const fallbackUrl = variant === "thumb"
@@ -55,5 +57,7 @@ export async function GET(
       ? image.previewUrl || image.imageUrl
       : image.imageUrl;
 
-  return NextResponse.redirect(new URL(fallbackUrl, process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3002"));
+  const response = NextResponse.redirect(new URL(fallbackUrl, process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3002"));
+  response.headers.set("Cache-Control", "private, max-age=300");
+  return response;
 }
