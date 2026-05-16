@@ -89,10 +89,26 @@ Admin workflow:
 1. Go to `/admin/galleries`.
 2. Create a gallery with a title, client/session name, access code, and one-time password.
 3. Copy and share the password with the client when you create or reset it. Passwords are hashed and cannot be viewed later.
-4. Add image URLs from `/admin/galleries/[id]/images`.
+4. Add image URLs from `/admin/galleries/[id]/images`, or upload a prepared local gallery to private Cloudflare R2 with a script.
 5. Publish the gallery when it is ready for the client.
 
-The current version uses image URLs pasted into admin. URLs may be local public paths such as `/images/galleries/client-001.jpg` or hosted image URLs. Future production image hosting should use Cloudflare R2, S3, or a gallery CDN with an upload workflow.
+Production gallery delivery can use private Cloudflare R2. With public bucket access disabled, the site serves thumbnails, previews, and downloads through authenticated Next.js routes after the client logs in. Add these environment variables on the server:
+
+```bash
+R2_ACCOUNT_ID=""
+R2_ACCESS_KEY_ID=""
+R2_SECRET_ACCESS_KEY=""
+R2_BUCKET_NAME="photokingshot-galleries"
+R2_PUBLIC_BASE_URL=""
+```
+
+Alexis Kofi's graduation gallery can be uploaded from local originals with:
+
+```bash
+npm run gallery:upload-r2:alexis
+```
+
+The script uploads originals, generates 600px thumbnails and 1400px previews with Sharp, then updates the existing `GalleryImage` rows with R2 object keys. Local `imageUrl` values stay in the database as a fallback.
 
 Optional sample seed:
 

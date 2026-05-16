@@ -92,6 +92,11 @@ model GalleryImage {
   id             String        @id @default(cuid())
   galleryId      String
   imageUrl       String
+  originalKey    String?
+  thumbnailKey   String?
+  previewKey     String?
+  thumbnailUrl   String?
+  previewUrl     String?
   title          String?
   caption        String?
   sortOrder      Int           @default(0)
@@ -101,4 +106,5 @@ model GalleryImage {
   gallery        ClientGallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
 
   @@index([galleryId, sortOrder])
+  @@index([originalKey])
 }

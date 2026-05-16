@@ -64,6 +64,15 @@ export default async function ClientGalleryPage({ params }: { params: Promise<{ 
           images={gallery.images.map((image) => ({
             id: image.id,
             imageUrl: image.imageUrl,
+            thumbnailUrl: image.thumbnailKey
+              ? `/api/galleries/${gallery.slug}/images/${image.id}/thumb`
+              : image.thumbnailUrl || image.imageUrl,
+            previewUrl: image.previewKey
+              ? `/api/galleries/${gallery.slug}/images/${image.id}/preview`
+              : image.previewUrl || image.imageUrl,
+            downloadUrl: image.originalKey
+              ? `/api/galleries/${gallery.slug}/images/${image.id}/download`
+              : image.imageUrl,
             title: image.title,
             caption: image.caption,
             canDownload: gallery.allowDownloads && image.isDownloadable

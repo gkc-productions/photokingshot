@@ -6,6 +6,9 @@ import { clsx } from "clsx";
 export type GalleryLightboxImage = {
   id: string;
   imageUrl: string;
+  thumbnailUrl: string;
+  previewUrl: string;
+  downloadUrl: string;
   title: string | null;
   caption: string | null;
   canDownload: boolean;
@@ -109,7 +112,7 @@ export function GalleryLightbox({ images, galleryTitle, downloadAllUrl, audioUrl
         {images.map((image, index) => (
           <figure key={image.id} className="group relative mb-4 break-inside-avoid overflow-hidden rounded-sm bg-black">
             <button type="button" onClick={() => open(index)} className="block w-full text-left" aria-label={`Open ${image.title || galleryTitle}`}>
-              <img src={image.imageUrl} alt={image.title || image.caption || galleryTitle} loading="lazy" className="h-auto w-full bg-black object-cover transition duration-500 group-hover:scale-[1.025] group-hover:opacity-90" />
+              <img src={image.thumbnailUrl} alt={image.title || image.caption || galleryTitle} loading="lazy" className="h-auto w-full bg-black object-cover transition duration-500 group-hover:scale-[1.025] group-hover:opacity-90" />
               <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent p-4 opacity-0 transition group-hover:opacity-100">
                 <span className="block text-sm font-black text-white">{image.title || "View image"}</span>
                 {image.caption ? <span className="mt-1 block text-xs text-white/70">{image.caption}</span> : null}
@@ -147,7 +150,7 @@ export function GalleryLightbox({ images, galleryTitle, downloadAllUrl, audioUrl
                 {slideshow ? "Pause" : "Slideshow"}
               </button>
               {activeImage.canDownload ? (
-                <a href={activeImage.imageUrl} download className="rounded-sm border border-white/20 px-3 py-2 text-xs font-black uppercase tracking-wide text-white hover:border-[#d9a93b] hover:text-[#d9a93b]">
+                <a href={activeImage.downloadUrl} download className="rounded-sm border border-white/20 px-3 py-2 text-xs font-black uppercase tracking-wide text-white hover:border-[#d9a93b] hover:text-[#d9a93b]">
                   Download
                 </a>
               ) : null}
@@ -168,7 +171,7 @@ export function GalleryLightbox({ images, galleryTitle, downloadAllUrl, audioUrl
                 </button>
               </>
             ) : null}
-            <img src={activeImage.imageUrl} alt={activeImage.title || activeImage.caption || galleryTitle} className="max-h-full max-w-full object-contain shadow-2xl shadow-black" />
+            <img src={activeImage.previewUrl} alt={activeImage.title || activeImage.caption || galleryTitle} className="max-h-full max-w-full object-contain shadow-2xl shadow-black" />
           </div>
 
           <div className="border-t border-white/10 px-4 py-4">
