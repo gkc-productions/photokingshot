@@ -108,7 +108,7 @@ Alexis Kofi's graduation gallery can be uploaded from local originals with:
 npm run gallery:upload-r2:alexis
 ```
 
-The script uploads originals, generates 600px thumbnails and 1400px previews with Sharp, then updates the existing `GalleryImage` rows with R2 object keys. Local `imageUrl` values stay in the database as a fallback.
+The script preserves originals for full-size downloads, generates 900px progressive JPEG thumbnails for fast grid loading, generates 2200px high-quality progressive JPEG previews for lightbox/slideshow viewing, then updates the existing `GalleryImage` rows with R2 object keys. Local `imageUrl` values stay in the database as a fallback.
 
 Optional sample seed:
 

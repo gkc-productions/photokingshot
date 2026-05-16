@@ -1,6 +1,6 @@
 import { readFileSync, readdirSync } from "fs";
 import path from "path";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { HeadObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { PrismaClient } from "@prisma/client";
 import sharp from "sharp";
 
@@ -73,6 +73,18 @@ async function uploadR2Object({ key, body, contentType }: { key: string; body: B
   }));
 }
 
+async function r2ObjectExists(key: string) {
+  try {
+    await getR2Client().send(new HeadObjectCommand({
+      Bucket: env("R2_BUCKET_NAME"),
+      Key: key
+    }));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function main() {
   loadEnvFile();
 
@@ -87,6 +99,7 @@ async function main() {
 
   const files = imageFiles();
   let uploadedOriginals = 0;
+  let skippedOriginals = 0;
   let uploadedThumbs = 0;
   let uploadedPreviews = 0;
   let updatedImages = 0;
@@ -97,13 +110,13 @@ async function main() {
     const original = readFileSync(sourcePath);
     const thumbnail = await sharp(original)
       .rotate()
-      .resize({ width: 600, withoutEnlargement: true })
-      .jpeg({ quality: 75 })
+      .resize({ width: 900, withoutEnlargement: true })
+      .jpeg({ quality: 82, progressive: true })
       .toBuffer();
     const preview = await sharp(original)
       .rotate()
-      .resize({ width: 1400, withoutEnlargement: true })
-      .jpeg({ quality: 82 })
+      .resize({ width: 2200, withoutEnlargement: true })
+      .jpeg({ quality: 92, progressive: true })
       .toBuffer();
 
     const originalKey = `galleries/${gallerySlug}/originals/${filename}`;
@@ -111,8 +124,12 @@ async function main() {
     const previewKey = `galleries/${gallerySlug}/previews/${filename}`;
     const imageUrl = `/images/galleries/${gallerySlug}/${filename}`;
 
-    await uploadR2Object({ key: originalKey, body: original, contentType: contentTypeFor(filename) });
-    uploadedOriginals++;
+    if (await r2ObjectExists(originalKey)) {
+      skippedOriginals++;
+    } else {
+      await uploadR2Object({ key: originalKey, body: original, contentType: contentTypeFor(filename) });
+      uploadedOriginals++;
+    }
     await uploadR2Object({ key: thumbnailKey, body: thumbnail, contentType: "image/jpeg" });
     uploadedThumbs++;
     await uploadR2Object({ key: previewKey, body: preview, contentType: "image/jpeg" });
@@ -154,6 +171,9 @@ async function main() {
     gallery: gallerySlug,
     filesFound: files.length,
     uploadedOriginals,
+    skippedOriginals,
+    thumbnailsRegenerated: uploadedThumbs,
+    previewsRegenerated: uploadedPreviews,
     uploadedThumbs,
     uploadedPreviews,
     updatedImages,
