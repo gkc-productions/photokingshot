@@ -9,20 +9,22 @@ export default async function AdminDashboardPage() {
   const data = await Promise.all([
     prisma.bookingInquiry.findMany({ orderBy: { createdAt: "desc" }, take: 50 }),
     prisma.blogPost.count(),
+    prisma.clientGallery.count(),
     prisma.affiliateProduct.count(),
     prisma.portfolioItem.count()
   ])
-    .then(([inquiries, blogCount, productCount, portfolioCount]) => ({ inquiries, blogCount, productCount, portfolioCount, hasDb: true }))
-    .catch(() => ({ inquiries: [], blogCount: 0, productCount: 0, portfolioCount: 0, hasDb: false }));
-  const { inquiries, blogCount, productCount, portfolioCount, hasDb } = data;
+    .then(([inquiries, blogCount, galleryCount, productCount, portfolioCount]) => ({ inquiries, blogCount, galleryCount, productCount, portfolioCount, hasDb: true }))
+    .catch(() => ({ inquiries: [], blogCount: 0, galleryCount: 0, productCount: 0, portfolioCount: 0, hasDb: false }));
+  const { inquiries, blogCount, galleryCount, productCount, portfolioCount, hasDb } = data;
 
   return (
     <section className="section-shell py-10">
       <p className="eyebrow">Dashboard</p>
       <h1 className="mt-3 text-4xl font-black">Booking inquiries</h1>
       {!hasDb ? <div className="mt-6"><DbNotice area="admin dashboard" /></div> : null}
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
+      <div className="mt-8 grid gap-4 md:grid-cols-4">
         <div className="surface-card rounded-sm p-5"><p className="text-3xl font-black">{blogCount}</p><p className="muted-copy">Blog posts</p></div>
+        <div className="surface-card rounded-sm p-5"><p className="text-3xl font-black">{galleryCount}</p><p className="muted-copy">Client galleries</p></div>
         <div className="surface-card rounded-sm p-5"><p className="text-3xl font-black">{productCount}</p><p className="muted-copy">Gear recommendations</p></div>
         <div className="surface-card rounded-sm p-5"><p className="text-3xl font-black">{portfolioCount}</p><p className="muted-copy">Portfolio items</p></div>
       </div>

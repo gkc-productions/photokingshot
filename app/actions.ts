@@ -1,10 +1,12 @@
 "use server";
 
 import { BlogStatus } from "@prisma/client";
+import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { clearAdminSession, setAdminSession } from "@/lib/admin-auth";
+import { setGalleryAccessCookie } from "@/lib/gallery-auth";
 import { sendBookingNotification } from "@/lib/mail";
 import { prisma } from "@/lib/prisma";
 
@@ -181,4 +183,126 @@ export async function deletePortfolioItem(formData: FormData) {
   await prisma.portfolioItem.delete({ where: { id: String(formData.get("id")) } });
   revalidatePath("/portfolio");
   redirect("/admin/portfolio");
+}
+
+const gallerySchema = z.object({
+  id: z.string().optional(),
+  title: requiredString,
+  slug: z.string().trim().optional(),
+  clientName: requiredString,
+  clientEmail: z.string().trim().email().optional().or(z.literal("")),
+  sessionDate: z.string().optional(),
+  description: z.string().trim().optional(),
+  accessCode: requiredString,
+  password: z.string().optional(),
+  isPublished: formBoolean.default(false),
+  allowDownloads: formBoolean.default(false)
+});
+
+export async function upsertClientGallery(formData: FormData) {
+  const parsed = gallerySchema.parse(Object.fromEntries(formData));
+  const slug = parsed.slug ? slugify(parsed.slug) : slugify(parsed.title);
+  const password = parsed.password?.trim();
+  if (!parsed.id && !password) {
+    throw new Error("A gallery password is required when creating a new gallery.");
+  }
+
+  const data = {
+    title: parsed.title,
+    slug,
+    clientName: parsed.clientName,
+    clientEmail: parsed.clientEmail || null,
+    sessionDate: parsed.sessionDate ? new Date(parsed.sessionDate) : null,
+    description: parsed.description || null,
+    accessCode: parsed.accessCode.trim(),
+    isPublished: parsed.isPublished,
+    allowDownloads: parsed.allowDownloads,
+    ...(password ? { passwordHash: await bcrypt.hash(password, 12) } : {})
+  };
+
+  if (parsed.id) {
+    await prisma.clientGallery.update({ where: { id: parsed.id }, data });
+  } else {
+    await prisma.clientGallery.create({ data: data as typeof data & { passwordHash: string } });
+  }
+  revalidatePath("/galleries");
+  revalidatePath("/admin/galleries");
+  redirect("/admin/galleries");
+}
+
+export async function deleteClientGallery(formData: FormData) {
+  await prisma.clientGallery.delete({ where: { id: String(formData.get("id")) } });
+  revalidatePath("/galleries");
+  redirect("/admin/galleries");
+}
+
+const galleryImageSchema = z.object({
+  id: z.string().optional(),
+  galleryId: requiredString,
+  imageUrl: requiredString,
+  title: z.string().trim().optional(),
+  caption: z.string().trim().optional(),
+  sortOrder: z.coerce.number().int().default(0),
+  isDownloadable: formBoolean.default(false)
+});
+
+export async function upsertGalleryImage(formData: FormData) {
+  const parsed = galleryImageSchema.parse(Object.fromEntries(formData));
+  const data = {
+    galleryId: parsed.galleryId,
+    imageUrl: parsed.imageUrl,
+    title: parsed.title || null,
+    caption: parsed.caption || null,
+    sortOrder: parsed.sortOrder,
+    isDownloadable: parsed.isDownloadable
+  };
+
+  if (parsed.id) {
+    await prisma.galleryImage.update({ where: { id: parsed.id }, data });
+  } else {
+    await prisma.galleryImage.create({ data });
+  }
+
+  const gallery = await prisma.clientGallery.findUnique({ where: { id: parsed.galleryId }, select: { slug: true } });
+  revalidatePath("/admin/galleries");
+  if (gallery) revalidatePath(`/galleries/${gallery.slug}`);
+  redirect(`/admin/galleries/${parsed.galleryId}/images`);
+}
+
+export async function deleteGalleryImage(formData: FormData) {
+  const id = String(formData.get("id"));
+  const galleryId = String(formData.get("galleryId"));
+  await prisma.galleryImage.delete({ where: { id } });
+  const gallery = await prisma.clientGallery.findUnique({ where: { id: galleryId }, select: { slug: true } });
+  if (gallery) revalidatePath(`/galleries/${gallery.slug}`);
+  redirect(`/admin/galleries/${galleryId}/images`);
+}
+
+const galleryLoginSchema = z.object({
+  accessCode: requiredString,
+  password: requiredString
+});
+
+export async function loginClientGallery(_: unknown, formData: FormData) {
+  const parsed = galleryLoginSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) {
+    return { ok: false, message: "Enter the gallery code and password provided by PhotoKingShot." };
+  }
+
+  const gallery = await prisma.clientGallery.findUnique({
+    where: { accessCode: parsed.data.accessCode.trim() },
+    select: { id: true, slug: true, passwordHash: true, isPublished: true }
+  }).catch(() => null);
+
+  if (!gallery || !gallery.isPublished) {
+    return { ok: false, message: "Gallery not found. Check your code or contact PhotoKingShot for help." };
+  }
+
+  const valid = await bcrypt.compare(parsed.data.password, gallery.passwordHash);
+  if (!valid) {
+    return { ok: false, message: "That gallery code and password did not match." };
+  }
+
+  await setGalleryAccessCookie(gallery);
+  redirect(`/galleries/${gallery.slug}`);
 }

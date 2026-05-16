@@ -67,3 +67,38 @@ model PortfolioItem {
 
   @@index([isFeatured, category])
 }
+
+model ClientGallery {
+  id             String         @id @default(cuid())
+  title          String
+  slug           String         @unique
+  clientName     String
+  clientEmail    String?
+  sessionDate    DateTime?
+  description    String?
+  accessCode     String         @unique
+  passwordHash   String
+  isPublished    Boolean        @default(false)
+  allowDownloads Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  images         GalleryImage[]
+
+  @@index([isPublished, slug])
+  @@index([accessCode])
+}
+
+model GalleryImage {
+  id             String        @id @default(cuid())
+  galleryId      String
+  imageUrl       String
+  title          String?
+  caption        String?
+  sortOrder      Int           @default(0)
+  isDownloadable Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  gallery        ClientGallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+
+  @@index([galleryId, sortOrder])
+}

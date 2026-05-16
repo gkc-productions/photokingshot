@@ -75,8 +75,32 @@ Admin can:
 - View booking inquiries
 - Create, edit, and delete blog posts
 - Mark blog posts as `DRAFT` or `PUBLISHED`
+- Create private client galleries with gallery code/password login
+- Add gallery image URLs and control download availability
 - Create, edit, and delete gear recommendations
 - Create, edit, and delete portfolio items
+
+## Client Galleries
+
+Client galleries live at `/galleries`. They are private and require the gallery code and password created in admin.
+
+Admin workflow:
+
+1. Go to `/admin/galleries`.
+2. Create a gallery with a title, client/session name, access code, and one-time password.
+3. Copy and share the password with the client when you create or reset it. Passwords are hashed and cannot be viewed later.
+4. Add image URLs from `/admin/galleries/[id]/images`.
+5. Publish the gallery when it is ready for the client.
+
+The current version uses image URLs pasted into admin. URLs may be local public paths such as `/images/galleries/client-001.jpg` or hosted image URLs. Future production image hosting should use Cloudflare R2, S3, or a gallery CDN with an upload workflow.
+
+Optional sample seed:
+
+```bash
+npx tsx scripts/seed-sample-gallery.ts
+```
+
+The sample gallery is unpublished by default and should not be auto-run in production.
 
 ## Ubuntu + Nginx + PM2 Deployment Notes
 
