@@ -196,7 +196,9 @@ const gallerySchema = z.object({
   accessCode: requiredString,
   password: z.string().optional(),
   isPublished: formBoolean.default(false),
-  allowDownloads: formBoolean.default(false)
+  allowDownloads: formBoolean.default(false),
+  selectionMode: formBoolean.default(false),
+  maxSelections: z.coerce.number().int().positive().optional().or(z.literal(""))
 });
 
 export async function upsertClientGallery(formData: FormData) {
@@ -217,6 +219,8 @@ export async function upsertClientGallery(formData: FormData) {
     accessCode: parsed.accessCode.trim(),
     isPublished: parsed.isPublished,
     allowDownloads: parsed.allowDownloads,
+    selectionMode: parsed.selectionMode,
+    maxSelections: parsed.maxSelections === "" ? null : parsed.maxSelections || null,
     ...(password ? { passwordHash: await bcrypt.hash(password, 12) } : {})
   };
 
@@ -276,6 +280,66 @@ export async function deleteGalleryImage(formData: FormData) {
   const gallery = await prisma.clientGallery.findUnique({ where: { id: galleryId }, select: { slug: true } });
   if (gallery) revalidatePath(`/galleries/${gallery.slug}`);
   redirect(`/admin/galleries/${galleryId}/images`);
+}
+
+const selectionSchema = z.object({
+  galleryId: requiredString,
+  imageIds: z.string().trim()
+});
+
+export async function submitGallerySelections(_: unknown, formData: FormData) {
+  const parsed = selectionSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { ok: false, message: "Choose the images you want edited before submitting." };
+
+  const gallery = await prisma.clientGallery.findUnique({
+    where: { id: parsed.data.galleryId },
+    include: { selections: true }
+  }).catch(() => null);
+  if (!gallery || !gallery.selectionMode || !gallery.isPublished) return { ok: false, message: "This proofing gallery is not available." };
+  if (gallery.selectionSubmittedAt) return { ok: false, message: "Your selections have already been submitted." };
+
+  const selectedIds = parsed.data.imageIds.split(",").map((id) => id.trim()).filter(Boolean);
+  const uniqueIds = Array.from(new Set(selectedIds));
+  const maxSelections = gallery.maxSelections || 20;
+  if (!uniqueIds.length) return { ok: false, message: "Select at least one image before submitting." };
+  if (uniqueIds.length > maxSelections) return { ok: false, message: `You can select up to ${maxSelections} images for this gallery.` };
+
+  const validImages = await prisma.galleryImage.findMany({
+    where: { galleryId: gallery.id, id: { in: uniqueIds } },
+    select: { id: true }
+  });
+  if (validImages.length !== uniqueIds.length) return { ok: false, message: "One or more selected images are not part of this gallery." };
+
+  await prisma.$transaction([
+    prisma.gallerySelection.deleteMany({ where: { galleryId: gallery.id } }),
+    prisma.gallerySelection.createMany({
+      data: uniqueIds.map((imageId) => ({ galleryId: gallery.id, imageId })),
+      skipDuplicates: true
+    }),
+    prisma.clientGallery.update({
+      where: { id: gallery.id },
+      data: { selectionSubmittedAt: new Date() }
+    })
+  ]);
+
+  revalidatePath(`/galleries/${gallery.slug}`);
+  revalidatePath("/admin/galleries");
+  return { ok: true, message: "Your selections have been submitted. PhotoKingShot will begin editing your chosen images." };
+}
+
+export async function resetGallerySelections(formData: FormData) {
+  const galleryId = String(formData.get("galleryId") || "");
+  const gallery = await prisma.clientGallery.findUnique({ where: { id: galleryId }, select: { slug: true } });
+  await prisma.$transaction([
+    prisma.gallerySelection.deleteMany({ where: { galleryId } }),
+    prisma.clientGallery.update({
+      where: { id: galleryId },
+      data: { selectionSubmittedAt: null, selectionNotes: null }
+    })
+  ]);
+  if (gallery) revalidatePath(`/galleries/${gallery.slug}`);
+  revalidatePath("/admin/galleries");
+  redirect(`/admin/galleries/${galleryId}/selections`);
 }
 
 const galleryLoginSchema = z.object({

@@ -112,6 +112,37 @@ The script preserves originals for full-size downloads, generates 900px progress
 
 Authenticated thumbnail, preview, and individual download routes redirect to short-lived signed R2 URLs so Cloudflare/R2 serves the image bytes instead of the VM. `Download All` still uses server resources because it packages originals into a ZIP on demand; for very large galleries, prefer individual downloads or a prebuilt ZIP export.
 
+Proofing galleries support private client selections. When selection mode is enabled, clients can select up to the configured limit, submit once, and admin can review or reset the submitted selections from `/admin/galleries/[id]/selections`.
+
+Ruth Afriyie's graduation proofing workflow uses JPG proofs converted from offline `.CR3` RAW files. Do not upload or serve RAW files through the website. Upload RAW files to:
+
+```bash
+public/images/galleries/ruth-afriyie-graduation-proofs/raw/
+```
+
+From a Mac, upload with:
+
+```bash
+scp -r "/path/to/Ruth Afriyie Grad pictures/"*.CR3 gkcpro@10.0.0.249:/home/gkcpro/public/images/galleries/ruth-afriyie-graduation-proofs/raw/
+scp -r "/path/to/Ruth Afriyie Grad pictures/"*.cr3 gkcpro@10.0.0.249:/home/gkcpro/public/images/galleries/ruth-afriyie-graduation-proofs/raw/
+```
+
+Or drag/drop the RAW files into that folder with VS Code. After upload:
+
+```bash
+npm run gallery:convert-ruth-cr3
+npm run gallery:ruth-grad
+npm run gallery:upload-r2:ruth
+pm2 restart photokingshot --update-env
+```
+
+The CR3 conversion script uses `darktable-cli` when available, with `rawtherapee-cli` as a fallback. If neither is installed, install Darktable:
+
+```bash
+sudo apt update
+sudo apt install -y darktable
+```
+
 Optional sample seed:
 
 ```bash

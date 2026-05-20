@@ -5,8 +5,9 @@ import { PrismaClient } from "@prisma/client";
 import sharp from "sharp";
 
 const prisma = new PrismaClient();
-const gallerySlug = "alexis-kofi-graduation";
-const sourceDir = path.join(process.cwd(), "public/images/galleries/alexis-kofi-graduation");
+const gallerySlug = process.argv[2] || "alexis-kofi-graduation";
+const sourceFolder = gallerySlug === "ruth-afriyie-graduation-proofs" ? "proofs" : "";
+const sourceDir = path.join(process.cwd(), "public/images/galleries", gallerySlug, sourceFolder);
 let r2Client: S3Client | null = null;
 
 function loadEnvFile() {
@@ -123,6 +124,7 @@ async function main() {
     const thumbnailKey = `galleries/${gallerySlug}/thumbs/${filename}`;
     const previewKey = `galleries/${gallerySlug}/previews/${filename}`;
     const imageUrl = `/images/galleries/${gallerySlug}/${filename}`;
+    const fallbackImageUrl = sourceFolder ? `/images/galleries/${gallerySlug}/${sourceFolder}/${filename}` : imageUrl;
 
     if (await r2ObjectExists(originalKey)) {
       skippedOriginals++;
@@ -136,14 +138,14 @@ async function main() {
     uploadedPreviews++;
 
     const existing = await prisma.galleryImage.findFirst({
-      where: { galleryId: gallery.id, imageUrl }
+      where: { galleryId: gallery.id, imageUrl: fallbackImageUrl }
     });
 
     const data = {
       originalKey,
       thumbnailKey,
       previewKey,
-      imageUrl,
+      imageUrl: fallbackImageUrl,
       title: existing?.title || `Alexis Kofi Graduation Photo ${index + 1}`,
       caption: existing?.caption || "Graduation portrait by PhotoKingShot",
       sortOrder: existing?.sortOrder ?? index,

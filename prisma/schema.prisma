@@ -80,9 +80,14 @@ model ClientGallery {
   passwordHash   String
   isPublished    Boolean        @default(false)
   allowDownloads Boolean        @default(true)
+  selectionMode  Boolean        @default(false)
+  maxSelections  Int?
+  selectionSubmittedAt DateTime?
+  selectionNotes String?
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   images         GalleryImage[]
+  selections     GallerySelection[]
 
   @@index([isPublished, slug])
   @@index([accessCode])
@@ -104,7 +109,21 @@ model GalleryImage {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   gallery        ClientGallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+  selections     GallerySelection[]
 
   @@index([galleryId, sortOrder])
   @@index([originalKey])
+}
+
+model GallerySelection {
+  id        String        @id @default(cuid())
+  galleryId String
+  imageId   String
+  createdAt DateTime      @default(now())
+  gallery   ClientGallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+  image     GalleryImage  @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
+  @@unique([galleryId, imageId])
+  @@index([galleryId, createdAt])
+  @@index([imageId])
 }

@@ -28,7 +28,8 @@ export default async function ClientGalleryPage({ params }: { params: Promise<{ 
     include: {
       images: {
         orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }]
-      }
+      },
+      selections: true
     }
   }).catch(() => null);
 
@@ -36,6 +37,7 @@ export default async function ClientGalleryPage({ params }: { params: Promise<{ 
   const allowed = await hasGalleryAccess(gallery);
   if (!allowed) redirect("/galleries?error=login-required");
   const downloadableCount = gallery.images.filter((image) => gallery.allowDownloads && image.isDownloadable).length;
+  const proofingEnabled = gallery.selectionMode;
   const audioUrl = gallery.slug === "alexis-kofi-graduation" && existsSync(path.join(process.cwd(), "public/audio/graduation-gallery.mp3"))
     ? "/audio/graduation-gallery.mp3"
     : undefined;
@@ -52,6 +54,12 @@ export default async function ClientGalleryPage({ params }: { params: Promise<{ 
             <span>{gallery.images.length} images</span>
           </div>
           {gallery.description ? <p className="muted-copy mt-5 max-w-3xl text-lg leading-8">{gallery.description}</p> : null}
+          {proofingEnabled ? (
+            <div className="gold-notice mt-6 rounded-sm p-4 text-sm">
+              <p className="font-bold">Select up to {gallery.maxSelections || 20} images for editing.</p>
+              <p className="mt-2">Downloads will be available after your final edited gallery is delivered.</p>
+            </div>
+          ) : null}
         </div>
         <p className="gold-notice rounded-sm p-4 text-sm md:max-w-xs">Please only share this gallery link with people you trust.</p>
       </div>
@@ -59,8 +67,15 @@ export default async function ClientGalleryPage({ params }: { params: Promise<{ 
       {gallery.images.length ? (
         <GalleryLightbox
           galleryTitle={gallery.title}
-          downloadAllUrl={gallery.allowDownloads && downloadableCount ? `/api/galleries/${gallery.slug}/download-all` : undefined}
+          galleryId={gallery.id}
+          downloadAllUrl={!proofingEnabled && gallery.allowDownloads && downloadableCount ? `/api/galleries/${gallery.slug}/download-all` : undefined}
           audioUrl={audioUrl}
+          proofing={proofingEnabled ? {
+            enabled: true,
+            maxSelections: gallery.maxSelections || 20,
+            submittedAt: gallery.selectionSubmittedAt?.toISOString() || null,
+            selectedImageIds: gallery.selections.map((selection) => selection.imageId)
+          } : undefined}
           images={gallery.images.map((image) => ({
             id: image.id,
             imageUrl: image.imageUrl,
@@ -75,7 +90,7 @@ export default async function ClientGalleryPage({ params }: { params: Promise<{ 
               : image.imageUrl,
             title: image.title,
             caption: image.caption,
-            canDownload: gallery.allowDownloads && image.isDownloadable
+            canDownload: !proofingEnabled && gallery.allowDownloads && image.isDownloadable
           }))}
         />
       ) : (

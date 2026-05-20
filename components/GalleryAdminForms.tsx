@@ -30,6 +30,12 @@ export function ClientGalleryForm({ gallery }: { gallery?: ClientGallery }) {
         <input type="checkbox" name="allowDownloads" value="true" defaultChecked={gallery?.allowDownloads ?? true} className="h-4 w-4" />
         Allow image downloads
       </label>
+      <label className="flex items-center gap-3 text-sm font-semibold text-[var(--muted)]">
+        <input type="hidden" name="selectionMode" value="false" />
+        <input type="checkbox" name="selectionMode" value="true" defaultChecked={gallery?.selectionMode ?? false} className="h-4 w-4" />
+        Proofing selection mode
+      </label>
+      <label className={label}>Max selections<input name="maxSelections" type="number" min="1" defaultValue={gallery?.maxSelections || ""} placeholder="20" className={input} /></label>
       <button className="gold-button min-h-12 rounded-sm px-5 py-3 text-sm font-black uppercase tracking-wide">Save Gallery</button>
     </form>
   );

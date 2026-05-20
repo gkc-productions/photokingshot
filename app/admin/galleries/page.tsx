@@ -10,7 +10,7 @@ export default async function AdminGalleriesPage() {
   await requireAdmin();
   const result = await prisma.clientGallery.findMany({
     orderBy: { updatedAt: "desc" },
-    include: { _count: { select: { images: true } } }
+    include: { _count: { select: { images: true, selections: true } } }
   })
     .then((galleries) => ({ galleries, hasDb: true }))
     .catch(() => ({ galleries: [], hasDb: false }));
@@ -31,10 +31,16 @@ export default async function AdminGalleriesPage() {
             <p className="eyebrow">{gallery.isPublished ? "PUBLISHED" : "DRAFT"} / {gallery.accessCode} / {gallery._count.images} images</p>
             <h2 className="mt-2 text-2xl font-black">{gallery.title}</h2>
             <p className="muted-copy mt-2">{gallery.clientName}{gallery.sessionDate ? ` • ${gallery.sessionDate.toLocaleDateString()}` : ""}</p>
+            {gallery.selectionMode ? (
+              <p className="gold-notice mt-3 rounded-sm p-3 text-sm">
+                Proofing mode / {gallery._count.selections} of {gallery.maxSelections || 20} selected / {gallery.selectionSubmittedAt ? "Submitted" : "Not submitted"}
+              </p>
+            ) : null}
             <div className="mt-4 flex flex-wrap gap-3 text-sm font-bold">
               <Link href={`/galleries/${gallery.slug}`} className="text-[var(--gold)]">View</Link>
               <Link href={`/admin/galleries/${gallery.id}/edit`} className="text-[var(--gold)]">Edit</Link>
               <Link href={`/admin/galleries/${gallery.id}/images`} className="text-[var(--gold)]">Images</Link>
+              {gallery.selectionMode ? <Link href={`/admin/galleries/${gallery.id}/selections`} className="text-[var(--gold)]">Selections</Link> : null}
               <form action={deleteClientGallery}><input type="hidden" name="id" value={gallery.id} /><button className="text-red-300">Delete</button></form>
             </div>
           </article>
