@@ -14,6 +14,8 @@ reference/
 .cache/
 .local/
 .pm2/
+public/images/galleries/
+public/images/galleries/ruth-afriyie-graduation-final/
 public/images/galleries/ruth-afriyie-graduation-proofs/
 .DS_Store
 .vscode/

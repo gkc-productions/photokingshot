@@ -11,7 +11,9 @@
     "generate:blog-drafts": "tsx scripts/generate-blog-drafts.ts",
     "gallery:convert-ruth-cr3": "tsx scripts/convert-cr3-to-jpg-proofs.ts",
     "gallery:ruth-grad": "tsx scripts/create-ruth-graduation-proof-gallery.ts",
-    "gallery:upload-r2:ruth": "tsx scripts/upload-gallery-to-r2.ts ruth-afriyie-graduation-proofs"
+    "gallery:ruth-final": "tsx scripts/create-ruth-final-gallery.ts",
+    "gallery:upload-r2:ruth": "tsx scripts/upload-gallery-to-r2.ts ruth-afriyie-graduation-proofs",
+    "gallery:upload-r2:ruth-final": "tsx scripts/upload-gallery-to-r2.ts ruth-afriyie-graduation-proofs public/images/galleries/ruth-afriyie-graduation-final"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1048.0",

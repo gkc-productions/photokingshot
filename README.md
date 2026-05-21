@@ -144,6 +144,21 @@ npm run gallery:upload-r2:ruth
 pm2 restart photokingshot --update-env
 ```
 
+Ruth Afriyie's final edited graduation gallery uses the preserved gallery login with slug `ruth-afriyie-graduation-proofs`, but final edited JPG/JPEG files are dropped into:
+
+```bash
+public/images/galleries/ruth-afriyie-graduation-final/
+```
+
+After adding the final edited photos, publish and upload them to R2 with:
+
+```bash
+cd /home/gkcpro
+npm run gallery:ruth-final
+npm run gallery:upload-r2:ruth-final
+pm2 restart photokingshot --update-env
+```
+
 The CR3 conversion script uses `darktable-cli` when available, with `rawtherapee-cli` as a fallback. If neither is installed, install Darktable:
 
 ```bash

@@ -6,8 +6,11 @@ import sharp from "sharp";
 
 const prisma = new PrismaClient();
 const gallerySlug = process.argv[2];
-const sourceFolder = gallerySlug === "ruth-afriyie-graduation-proofs" ? "proofs" : "";
-const sourceDir = path.join(process.cwd(), "public/images/galleries", gallerySlug, sourceFolder);
+const sourceArg = process.argv[3];
+const defaultSourceFolder = gallerySlug === "ruth-afriyie-graduation-proofs" ? "proofs" : "";
+const sourceDir = sourceArg
+  ? path.resolve(process.cwd(), sourceArg)
+  : path.join(process.cwd(), "public/images/galleries", gallerySlug || "", defaultSourceFolder);
 let r2Client: S3Client | null = null;
 
 function loadEnvFile() {
@@ -90,7 +93,7 @@ async function main() {
   loadEnvFile();
 
   if (!gallerySlug) {
-    throw new Error("Usage: tsx scripts/upload-gallery-to-r2.ts <gallery-slug>");
+    throw new Error("Usage: tsx scripts/upload-gallery-to-r2.ts <gallery-slug> [local-source-folder]");
   }
 
   if (!isR2Configured()) {
@@ -127,8 +130,7 @@ async function main() {
     const originalKey = `galleries/${gallerySlug}/originals/${filename}`;
     const thumbnailKey = `galleries/${gallerySlug}/thumbs/${filename}`;
     const previewKey = `galleries/${gallerySlug}/previews/${filename}`;
-    const imageUrl = `/images/galleries/${gallerySlug}/${filename}`;
-    const fallbackImageUrl = sourceFolder ? `/images/galleries/${gallerySlug}/${sourceFolder}/${filename}` : imageUrl;
+    const fallbackImageUrl = `/images/galleries/${path.relative(path.join(process.cwd(), "public/images/galleries"), sourceDir).split(path.sep).join("/")}/${filename}`;
 
     if (await r2ObjectExists(originalKey)) {
       skippedOriginals++;
@@ -175,6 +177,7 @@ async function main() {
 
   console.log(JSON.stringify({
     gallery: gallerySlug,
+    sourceDir,
     filesFound: files.length,
     uploadedOriginals,
     skippedOriginals,
