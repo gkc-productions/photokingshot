@@ -30,18 +30,33 @@ function loadEnvFile() {
 }
 
 function finalImageFiles() {
-  if (!existsSync(finalSourceDir)) return [];
+  if (!existsSync(finalSourceDir)) {
+    return { files: [] as string[], unsupportedFiles: [] as string[] };
+  }
 
-  return readdirSync(finalSourceDir, { withFileTypes: true })
-    .filter((entry) => entry.isFile() && /\.(jpe?g)$/i.test(entry.name))
+  const entries = readdirSync(finalSourceDir, { withFileTypes: true })
+    .filter((entry) => entry.isFile())
     .map((entry) => entry.name)
     .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
+
+  return {
+    files: entries.filter((name) => /\.(jpe?g)$/i.test(name)),
+    unsupportedFiles: entries.filter((name) => !/\.(jpe?g)$/i.test(name))
+  };
 }
 
 async function main() {
   loadEnvFile();
 
-  const files = finalImageFiles();
+  const { files, unsupportedFiles } = finalImageFiles();
+  console.log(JSON.stringify({
+    sourceDir: finalSourceDir,
+    filesFound: files.length,
+    first5: files.slice(0, 5),
+    last5: files.slice(-5),
+    unsupportedExtensions: unsupportedFiles
+  }, null, 2));
+
   let gallery = await prisma.clientGallery.findUnique({
     where: { slug: gallerySlug }
   });
@@ -77,9 +92,13 @@ async function main() {
     select: { id: true, imageUrl: true }
   });
   const existingByUrl = new Map(existingImages.map((image) => [image.imageUrl, image]));
+  const duplicateImageUrls = existingImages
+    .map((image) => image.imageUrl)
+    .filter((imageUrl, index, imageUrls) => imageUrls.indexOf(imageUrl) !== index);
 
   let createdImages = 0;
   let updatedImages = 0;
+  let skippedAsDuplicates = 0;
 
   for (const [index, filename] of files.entries()) {
     const imageUrl = `${publicBasePath}/${encodeURIComponent(filename).replace(/%2F/g, "/")}`;
@@ -98,6 +117,7 @@ async function main() {
         data
       });
       updatedImages++;
+      skippedAsDuplicates++;
     } else {
       await prisma.galleryImage.create({
         data: {
@@ -121,8 +141,13 @@ async function main() {
     passwordHashPreserved: true,
     sourceDir: finalSourceDir,
     filesFound: files.length,
+    first5: files.slice(0, 5),
+    last5: files.slice(-5),
+    unsupportedExtensions: unsupportedFiles,
     createdImages,
     updatedImages,
+    skippedAsDuplicates,
+    duplicateImageUrls,
     isPublished: gallery.isPublished,
     allowDownloads: gallery.allowDownloads,
     selectionMode: gallery.selectionMode,

@@ -34,9 +34,15 @@ function loadEnvFile() {
 }
 
 function imageFiles() {
-  return readdirSync(sourceDir)
-    .filter((entry) => /\.(jpe?g)$/i.test(entry))
-    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  const entries = readdirSync(sourceDir, { withFileTypes: true })
+    .filter((entry) => entry.isFile())
+    .map((entry) => entry.name)
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
+
+  return {
+    files: entries.filter((entry) => /\.(jpe?g)$/i.test(entry)),
+    unsupportedFiles: entries.filter((entry) => !/\.(jpe?g)$/i.test(entry))
+  };
 }
 
 function contentTypeFor(filename: string) {
@@ -105,73 +111,115 @@ async function main() {
   });
   if (!gallery) throw new Error(`Gallery not found: ${gallerySlug}`);
 
-  const files = imageFiles();
+  const { files, unsupportedFiles } = imageFiles();
+  console.log(JSON.stringify({
+    gallery: gallerySlug,
+    sourceDir,
+    filesFound: files.length,
+    first5: files.slice(0, 5),
+    last5: files.slice(-5),
+    unsupportedExtensions: unsupportedFiles
+  }, null, 2));
+
   let uploadedOriginals = 0;
   let skippedOriginals = 0;
   let uploadedThumbs = 0;
+  let skippedThumbs = 0;
   let uploadedPreviews = 0;
+  let skippedPreviews = 0;
   let updatedImages = 0;
   let createdImages = 0;
+  let skippedAsDuplicates = 0;
+  const errors: Array<{ filename: string; error: string }> = [];
 
   for (const [index, filename] of files.entries()) {
-    const sourcePath = path.join(sourceDir, filename);
-    const original = readFileSync(sourcePath);
-    const thumbnail = await sharp(original)
-      .rotate()
-      .resize({ width: 900, withoutEnlargement: true })
-      .jpeg({ quality: 82, progressive: true })
-      .toBuffer();
-    const preview = await sharp(original)
-      .rotate()
-      .resize({ width: 2200, withoutEnlargement: true })
-      .jpeg({ quality: 92, progressive: true })
-      .toBuffer();
+    try {
+      const sourcePath = path.join(sourceDir, filename);
+      const originalKey = `galleries/${gallerySlug}/originals/${filename}`;
+      const thumbnailKey = `galleries/${gallerySlug}/thumbs/${filename}`;
+      const previewKey = `galleries/${gallerySlug}/previews/${filename}`;
+      const fallbackImageUrl = `/images/galleries/${path.relative(path.join(process.cwd(), "public/images/galleries"), sourceDir).split(path.sep).join("/")}/${filename}`;
 
-    const originalKey = `galleries/${gallerySlug}/originals/${filename}`;
-    const thumbnailKey = `galleries/${gallerySlug}/thumbs/${filename}`;
-    const previewKey = `galleries/${gallerySlug}/previews/${filename}`;
-    const fallbackImageUrl = `/images/galleries/${path.relative(path.join(process.cwd(), "public/images/galleries"), sourceDir).split(path.sep).join("/")}/${filename}`;
+      const [originalExists, thumbnailExists, previewExists] = await Promise.all([
+        r2ObjectExists(originalKey),
+        r2ObjectExists(thumbnailKey),
+        r2ObjectExists(previewKey)
+      ]);
+      const needsOriginal = !originalExists;
+      const needsThumbnail = !thumbnailExists;
+      const needsPreview = !previewExists;
 
-    if (await r2ObjectExists(originalKey)) {
-      skippedOriginals++;
-    } else {
-      await uploadR2Object({ key: originalKey, body: original, contentType: contentTypeFor(filename) });
-      uploadedOriginals++;
-    }
-    await uploadR2Object({ key: thumbnailKey, body: thumbnail, contentType: "image/jpeg" });
-    uploadedThumbs++;
-    await uploadR2Object({ key: previewKey, body: preview, contentType: "image/jpeg" });
-    uploadedPreviews++;
+      if (!needsOriginal) skippedOriginals++;
+      if (!needsThumbnail) skippedThumbs++;
+      if (!needsPreview) skippedPreviews++;
 
-    const existing = await prisma.galleryImage.findFirst({
-      where: { galleryId: gallery.id, imageUrl: fallbackImageUrl }
-    });
+      let original: Buffer | null = null;
+      if (needsOriginal || needsThumbnail || needsPreview) {
+        original = readFileSync(sourcePath);
+      }
 
-    const data = {
-      originalKey,
-      thumbnailKey,
-      previewKey,
-      imageUrl: fallbackImageUrl,
-      title: existing?.title || `${gallery.title} Photo ${index + 1}`,
-      caption: existing?.caption || "Private gallery photo by PhotoKingShot",
-      sortOrder: existing?.sortOrder ?? index,
-      isDownloadable: existing?.isDownloadable ?? true
-    };
+      if (needsOriginal && original) {
+        await uploadR2Object({ key: originalKey, body: original, contentType: contentTypeFor(filename) });
+        uploadedOriginals++;
+      }
+      if (needsThumbnail && original) {
+        const thumbnail = await sharp(original)
+          .rotate()
+          .resize({ width: 900, withoutEnlargement: true })
+          .jpeg({ quality: 82, progressive: true })
+          .toBuffer();
+        await uploadR2Object({ key: thumbnailKey, body: thumbnail, contentType: "image/jpeg" });
+        uploadedThumbs++;
+      }
+      if (needsPreview && original) {
+        const preview = await sharp(original)
+          .rotate()
+          .resize({ width: 2200, withoutEnlargement: true })
+          .jpeg({ quality: 92, progressive: true })
+          .toBuffer();
+        await uploadR2Object({ key: previewKey, body: preview, contentType: "image/jpeg" });
+        uploadedPreviews++;
+      }
 
-    if (existing) {
-      await prisma.galleryImage.update({
-        where: { id: existing.id },
-        data
+      const existing = await prisma.galleryImage.findFirst({
+        where: { galleryId: gallery.id, imageUrl: fallbackImageUrl }
       });
-      updatedImages++;
-    } else {
-      await prisma.galleryImage.create({
-        data: {
-          ...data,
-          galleryId: gallery.id
-        }
+
+      const data = {
+        originalKey,
+        thumbnailKey,
+        previewKey,
+        imageUrl: fallbackImageUrl,
+        title: existing?.title || `${gallery.title} Photo ${index + 1}`,
+        caption: existing?.caption || "Private gallery photo by PhotoKingShot",
+        sortOrder: existing?.sortOrder ?? index + 1,
+        isDownloadable: existing?.isDownloadable ?? true
+      };
+
+      if (existing) {
+        await prisma.galleryImage.update({
+          where: { id: existing.id },
+          data
+        });
+        updatedImages++;
+        skippedAsDuplicates++;
+      } else {
+        await prisma.galleryImage.create({
+          data: {
+            ...data,
+            galleryId: gallery.id
+          }
+        });
+        createdImages++;
+      }
+
+      console.log(`${index + 1}/${files.length} ${filename}: originals ${needsOriginal ? "uploaded" : "exists"}, thumbs ${needsThumbnail ? "uploaded" : "exists"}, previews ${needsPreview ? "uploaded" : "exists"}, db ${existing ? "updated" : "created"}`);
+    } catch (error) {
+      errors.push({
+        filename,
+        error: error instanceof Error ? error.message : String(error)
       });
-      createdImages++;
+      console.error(`${index + 1}/${files.length} ${filename}: ERROR ${errors[errors.length - 1].error}`);
     }
   }
 
@@ -179,15 +227,26 @@ async function main() {
     gallery: gallerySlug,
     sourceDir,
     filesFound: files.length,
+    first5: files.slice(0, 5),
+    last5: files.slice(-5),
+    unsupportedExtensions: unsupportedFiles,
     uploadedOriginals,
     skippedOriginals,
     thumbnailsRegenerated: uploadedThumbs,
     previewsRegenerated: uploadedPreviews,
     uploadedThumbs,
+    skippedThumbs,
     uploadedPreviews,
+    skippedPreviews,
     updatedImages,
-    createdImages
+    createdImages,
+    skippedAsDuplicates,
+    errors
   }, null, 2));
+
+  if (errors.length) {
+    process.exitCode = 1;
+  }
 }
 
 main()
