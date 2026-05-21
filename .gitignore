@@ -9,6 +9,7 @@ dist/
 .npm/
 .vscode-server/
 .codex/
+reference/
 .cloudflared-*
 .cache/
 .local/

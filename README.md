@@ -54,6 +54,20 @@ npm run build
 npm start
 ```
 
+## VS Code Remote SSH performance
+
+VS Code Remote SSH runs VS Code Server, extension host, TypeScript server, Git scanning, and the Codex/OpenAI extension inside the VM.
+
+Heavy folders are excluded from VS Code file watching and search to reduce CPU and RAM spikes while working remotely.
+
+If VS Code gets stuck, close VS Code and run:
+
+```bash
+pkill -f ".vscode-server"
+```
+
+This does not stop the PhotoKingShot PM2 app.
+
 ## Blog Draft Automation
 
 Generate six static draft placeholders:

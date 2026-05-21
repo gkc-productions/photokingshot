@@ -1,0 +1,37 @@
+{
+  "files.watcherExclude": {
+    "**/.git/**": true,
+    "**/.next/**": true,
+    "**/node_modules/**": true,
+    "**/.npm/**": true,
+    "**/.cache/**": true,
+    "**/.vscode-server/**": true,
+    "**/reference/**": true,
+    "**/public/images/galleries/**": true,
+    "**/public/audio/**": true,
+    "**/tmp/**": true,
+    "**/logs/**": true
+  },
+  "search.exclude": {
+    "**/.next": true,
+    "**/node_modules": true,
+    "**/.npm": true,
+    "**/.cache": true,
+    "**/.vscode-server": true,
+    "**/reference": true,
+    "**/public/images/galleries": true,
+    "**/public/audio": true,
+    "**/tmp": true,
+    "**/logs": true
+  },
+  "files.exclude": {
+    "**/.next": true,
+    "**/node_modules": true,
+    "**/.npm": true,
+    "**/.cache": true
+  },
+  "typescript.tsserver.maxTsServerMemory": 1024,
+  "typescript.disableAutomaticTypeAcquisition": true,
+  "git.autorefresh": false,
+  "git.autoRepositoryDetection": false
+}
