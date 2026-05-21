@@ -5,7 +5,7 @@ import { PrismaClient } from "@prisma/client";
 import sharp from "sharp";
 
 const prisma = new PrismaClient();
-const gallerySlug = process.argv[2] || "alexis-kofi-graduation";
+const gallerySlug = process.argv[2];
 const sourceFolder = gallerySlug === "ruth-afriyie-graduation-proofs" ? "proofs" : "";
 const sourceDir = path.join(process.cwd(), "public/images/galleries", gallerySlug, sourceFolder);
 let r2Client: S3Client | null = null;
@@ -89,6 +89,10 @@ async function r2ObjectExists(key: string) {
 async function main() {
   loadEnvFile();
 
+  if (!gallerySlug) {
+    throw new Error("Usage: tsx scripts/upload-gallery-to-r2.ts <gallery-slug>");
+  }
+
   if (!isR2Configured()) {
     throw new Error("R2 env vars are missing. Required: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME.");
   }
@@ -146,8 +150,8 @@ async function main() {
       thumbnailKey,
       previewKey,
       imageUrl: fallbackImageUrl,
-      title: existing?.title || `Alexis Kofi Graduation Photo ${index + 1}`,
-      caption: existing?.caption || "Graduation portrait by PhotoKingShot",
+      title: existing?.title || `${gallery.title} Photo ${index + 1}`,
+      caption: existing?.caption || "Private gallery photo by PhotoKingShot",
       sortOrder: existing?.sortOrder ?? index,
       isDownloadable: existing?.isDownloadable ?? true
     };

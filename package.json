@@ -9,8 +9,6 @@
     "lint": "next lint",
     "health:server": "bash scripts/server-health.sh",
     "generate:blog-drafts": "tsx scripts/generate-blog-drafts.ts",
-    "gallery:alexis-grad": "tsx scripts/create-alexis-graduation-gallery.ts",
-    "gallery:upload-r2:alexis": "tsx scripts/upload-gallery-to-r2.ts alexis-kofi-graduation",
     "gallery:convert-ruth-cr3": "tsx scripts/convert-cr3-to-jpg-proofs.ts",
     "gallery:ruth-grad": "tsx scripts/create-ruth-graduation-proof-gallery.ts",
     "gallery:upload-r2:ruth": "tsx scripts/upload-gallery-to-r2.ts ruth-afriyie-graduation-proofs"

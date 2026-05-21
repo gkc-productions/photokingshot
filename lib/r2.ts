@@ -1,6 +1,4 @@
-import "server-only";
-
-import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectsCommand, GetObjectCommand, ListObjectsV2Command, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import type { Readable } from "stream";
 
@@ -82,4 +80,49 @@ export async function getR2Object(key: string) {
     Bucket: getEnv("R2_BUCKET_NAME"),
     Key: key
   }));
+}
+
+export async function listR2ObjectsByPrefix(prefix: string) {
+  if (!prefix || prefix === "/") {
+    throw new Error("Refusing to list R2 objects without a specific prefix.");
+  }
+
+  const keys: string[] = [];
+  let continuationToken: string | undefined;
+
+  do {
+    const response = await getR2Client().send(new ListObjectsV2Command({
+      Bucket: getEnv("R2_BUCKET_NAME"),
+      Prefix: prefix,
+      ContinuationToken: continuationToken
+    }));
+
+    for (const object of response.Contents || []) {
+      if (object.Key) keys.push(object.Key);
+    }
+
+    continuationToken = response.IsTruncated ? response.NextContinuationToken : undefined;
+  } while (continuationToken);
+
+  return keys;
+}
+
+export async function deleteR2Objects(keys: string[]) {
+  if (!keys.length) return 0;
+
+  let deleted = 0;
+  for (let index = 0; index < keys.length; index += 1000) {
+    const batch = keys.slice(index, index + 1000);
+    const response = await getR2Client().send(new DeleteObjectsCommand({
+      Bucket: getEnv("R2_BUCKET_NAME"),
+      Delete: {
+        Objects: batch.map((key) => ({ Key: key })),
+        Quiet: true
+      }
+    }));
+
+    deleted += batch.length - (response.Errors?.length || 0);
+  }
+
+  return deleted;
 }
