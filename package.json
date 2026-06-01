@@ -10,8 +10,10 @@
     "health:server": "bash scripts/server-health.sh",
     "generate:blog-drafts": "tsx scripts/generate-blog-drafts.ts",
     "gallery:convert-ruth-cr3": "tsx scripts/convert-cr3-to-jpg-proofs.ts",
+    "gallery:deborah-bday": "tsx scripts/create-deborah-birthday-gallery.ts",
     "gallery:ruth-grad": "tsx scripts/create-ruth-graduation-proof-gallery.ts",
     "gallery:ruth-final": "tsx scripts/create-ruth-final-gallery.ts",
+    "gallery:upload-r2:deborah-bday": "tsx scripts/upload-gallery-to-r2.ts deborah-bonful-birthday public/images/galleries/deborah-bonful-birthday",
     "gallery:upload-r2:ruth": "tsx scripts/upload-gallery-to-r2.ts ruth-afriyie-graduation-proofs",
     "gallery:upload-r2:ruth-final": "tsx scripts/upload-gallery-to-r2.ts ruth-afriyie-graduation-proofs public/images/galleries/ruth-afriyie-graduation-final"
   },
