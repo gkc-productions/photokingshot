@@ -78,7 +78,7 @@ export default async function HomePage() {
 
       <section className="theme-band border-y py-20">
         <div className="section-shell">
-          <SectionHeading eyebrow="Portfolio preview" title="A sharper visual structure for real work as it is uploaded." body="The portfolio is organized by shoot type now, with clean placeholders that can be replaced through admin as final galleries are added." />
+          <SectionHeading eyebrow="Portfolio preview" title="Recent work organized by shoot type." body="Browse portraits, events, graduations, community coverage, and creative sessions in a clean portfolio built for quick review." />
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {portfolio.slice(0, 4).map((item) => <PortfolioCard key={item.title} {...item} />)}
           </div>

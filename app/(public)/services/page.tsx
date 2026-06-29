@@ -26,7 +26,7 @@ const services = [
 export default function ServicesPage() {
   return (
     <section className="section-shell py-16 md:py-24">
-      <SectionHeading eyebrow="Services" title="Photography packages shaped for real people, real rooms, and real moments." body="Starting prices are placeholders for the first version and can be updated in admin or page copy as packages are finalized." />
+      <SectionHeading eyebrow="Services" title="Photography packages shaped for real people, real rooms, and real moments." body="Use these starting points to plan your session, then share your date, location, and creative direction for a tailored quote." />
       <div className="mt-12 grid gap-5 md:grid-cols-2">
         {services.map(([title, body, price]) => (
           <article key={title} className="surface-card rounded-sm p-6">

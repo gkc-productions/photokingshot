@@ -12,6 +12,7 @@ import { prisma } from "@/lib/prisma";
 
 const requiredString = z.string().trim().min(1);
 const formBoolean = z.preprocess((value) => value === "true" || value === "on", z.boolean());
+const bookingStatuses = ["NEW", "CONTACTED", "BOOKED", "COMPLETED", "ARCHIVED"] as const;
 
 const bookingSchema = z.object({
   fullName: requiredString,
@@ -51,6 +52,21 @@ export async function createBookingInquiry(_: unknown, formData: FormData) {
 
   revalidatePath("/admin");
   return { ok: true, message: "Your inquiry was received. PhotoKingShot will follow up soon." };
+}
+
+export async function updateBookingInquiryStatus(formData: FormData) {
+  const parsed = z.object({
+    id: requiredString,
+    status: z.enum(bookingStatuses)
+  }).parse(Object.fromEntries(formData));
+
+  await prisma.bookingInquiry.update({
+    where: { id: parsed.id },
+    data: { status: parsed.status }
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/bookings");
 }
 
 export async function loginAdmin(_: unknown, formData: FormData) {
@@ -232,6 +248,41 @@ export async function upsertClientGallery(formData: FormData) {
   revalidatePath("/galleries");
   revalidatePath("/admin/galleries");
   redirect("/admin/galleries");
+}
+
+export async function toggleClientGalleryPublished(formData: FormData) {
+  const id = String(formData.get("id") || "");
+  const gallery = await prisma.clientGallery.findUnique({
+    where: { id },
+    select: { slug: true, isPublished: true }
+  });
+  if (!gallery) return;
+
+  await prisma.clientGallery.update({
+    where: { id },
+    data: { isPublished: !gallery.isPublished }
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/galleries");
+  revalidatePath(`/galleries/${gallery.slug}`);
+}
+
+export async function resetClientGalleryPassword(formData: FormData) {
+  const parsed = z.object({
+    id: requiredString,
+    password: z.string().trim().min(1)
+  }).parse(Object.fromEntries(formData));
+
+  const gallery = await prisma.clientGallery.update({
+    where: { id: parsed.id },
+    data: { passwordHash: await bcrypt.hash(parsed.password, 12) },
+    select: { slug: true }
+  });
+
+  revalidatePath("/admin/galleries");
+  revalidatePath(`/galleries/${gallery.slug}`);
+  redirect(`/admin/galleries/${parsed.id}/edit`);
 }
 
 export async function deleteClientGallery(formData: FormData) {

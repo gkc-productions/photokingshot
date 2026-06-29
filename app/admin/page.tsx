@@ -1,56 +1,83 @@
+import Link from "next/link";
+import { DbNotice } from "@/components/DbNotice";
 import { requireAdmin } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
-import { DbNotice } from "@/components/DbNotice";
 
 export const dynamic = "force-dynamic";
 
+const statClass = "surface-card rounded-sm p-5";
+
 export default async function AdminDashboardPage() {
   await requireAdmin();
-  const data = await Promise.all([
-    prisma.bookingInquiry.findMany({ orderBy: { createdAt: "desc" }, take: 50 }),
-    prisma.blogPost.count(),
+  const result = await Promise.all([
+    prisma.bookingInquiry.count(),
+    prisma.bookingInquiry.count({ where: { status: "NEW" } }),
     prisma.clientGallery.count(),
-    prisma.affiliateProduct.count(),
-    prisma.portfolioItem.count()
+    prisma.clientGallery.count({ where: { isPublished: true } }),
+    prisma.clientGallery.count({ where: { selectionMode: true } }),
+    prisma.clientGallery.count({ where: { selectionMode: false } }),
+    prisma.portfolioItem.count(),
+    prisma.blogPost.count(),
+    prisma.affiliateProduct.count()
   ])
-    .then(([inquiries, blogCount, galleryCount, productCount, portfolioCount]) => ({ inquiries, blogCount, galleryCount, productCount, portfolioCount, hasDb: true }))
-    .catch(() => ({ inquiries: [], blogCount: 0, galleryCount: 0, productCount: 0, portfolioCount: 0, hasDb: false }));
-  const { inquiries, blogCount, galleryCount, productCount, portfolioCount, hasDb } = data;
+    .then(([totalBookings, newBookings, totalGalleries, publishedGalleries, proofingGalleries, finalGalleries, portfolioItems, blogPosts, gearItems]) => ({
+      stats: { totalBookings, newBookings, totalGalleries, publishedGalleries, proofingGalleries, finalGalleries, portfolioItems, blogPosts, gearItems },
+      hasDb: true
+    }))
+    .catch(() => ({
+      stats: { totalBookings: 0, newBookings: 0, totalGalleries: 0, publishedGalleries: 0, proofingGalleries: 0, finalGalleries: 0, portfolioItems: 0, blogPosts: 0, gearItems: 0 },
+      hasDb: false
+    }));
+
+  const stats = [
+    ["Total booking inquiries", result.stats.totalBookings],
+    ["New booking inquiries", result.stats.newBookings],
+    ["Total client galleries", result.stats.totalGalleries],
+    ["Published galleries", result.stats.publishedGalleries],
+    ["Proofing galleries", result.stats.proofingGalleries],
+    ["Final galleries", result.stats.finalGalleries],
+    ["Total portfolio items", result.stats.portfolioItems],
+    ["Total blog posts", result.stats.blogPosts]
+  ] as const;
+
+  const actions = [
+    ["New Gallery", "/admin/galleries/new"],
+    ["View Bookings", "/admin/bookings"],
+    ["Add Portfolio Item", "/admin/portfolio/new"],
+    ["Add Blog Post", "/admin/blog/new"],
+    ...(result.stats.gearItems >= 0 ? ([["Add Gear Item", "/admin/gear/new"]] as const) : [])
+  ] as const;
 
   return (
     <section className="section-shell py-10">
       <p className="eyebrow">Dashboard</p>
-      <h1 className="mt-3 text-4xl font-black">Booking inquiries</h1>
-      {!hasDb ? <div className="mt-6"><DbNotice area="admin dashboard" /></div> : null}
-      <div className="mt-8 grid gap-4 md:grid-cols-4">
-        <div className="surface-card rounded-sm p-5"><p className="text-3xl font-black">{blogCount}</p><p className="muted-copy">Blog posts</p></div>
-        <div className="surface-card rounded-sm p-5"><p className="text-3xl font-black">{galleryCount}</p><p className="muted-copy">Client galleries</p></div>
-        <div className="surface-card rounded-sm p-5"><p className="text-3xl font-black">{productCount}</p><p className="muted-copy">Gear recommendations</p></div>
-        <div className="surface-card rounded-sm p-5"><p className="text-3xl font-black">{portfolioCount}</p><p className="muted-copy">Portfolio items</p></div>
+      <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-black">Admin overview</h1>
+          <p className="muted-copy mt-3 max-w-2xl">Manage inquiries, private galleries, portfolio work, blog posts, and gear recommendations from one place.</p>
+        </div>
       </div>
-      <div className="mt-8 overflow-x-auto rounded-sm border border-[var(--border)]">
-        <table className="w-full min-w-[900px] text-left text-sm">
-          <thead className="bg-[var(--card-strong)] text-[var(--foreground)]">
-            <tr>
-              {["Name", "Contact", "Shoot", "Date", "Location", "Status", "Message"].map((head) => <th key={head} className="p-3">{head}</th>)}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[var(--border)] text-[var(--muted)]">
-            {inquiries.map((inquiry) => (
-              <tr key={inquiry.id}>
-                <td className="p-3 font-semibold text-[var(--foreground)]">{inquiry.fullName}</td>
-                <td className="p-3">{inquiry.email}<br />{inquiry.phone}</td>
-                <td className="p-3">{inquiry.shootType}</td>
-                <td className="p-3">{inquiry.preferredDate?.toLocaleDateString() || "Flexible"}</td>
-                <td className="p-3">{inquiry.location}</td>
-                <td className="p-3">{inquiry.status}</td>
-                <td className="p-3">{inquiry.message}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {!result.hasDb ? <div className="mt-6"><DbNotice area="admin dashboard" /></div> : null}
+
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map(([label, value]) => (
+          <div key={label} className={statClass}>
+            <p className="text-3xl font-black">{value}</p>
+            <p className="muted-copy mt-1 text-sm">{label}</p>
+          </div>
+        ))}
       </div>
-      {!inquiries.length ? <p className="muted-copy mt-6">No inquiries yet.</p> : null}
+
+      <div className="mt-8 rounded-sm border border-[var(--border)] bg-[var(--card)] p-5">
+        <h2 className="text-2xl font-black">Quick actions</h2>
+        <div className="mt-4 flex flex-wrap gap-3">
+          {actions.map(([label, href], index) => (
+            <Link key={href} href={href} className={index === 0 ? "gold-button rounded-sm px-4 py-3 text-sm font-black" : "rounded-sm border border-[var(--border)] px-4 py-3 text-sm font-black text-[var(--foreground)] hover:border-[var(--gold)] hover:text-[var(--gold)]"}>
+              {label}
+            </Link>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
