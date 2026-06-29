@@ -2,6 +2,7 @@ import { existsSync, readdirSync } from "fs";
 import path from "path";
 import { deleteGalleryImage } from "@/app/actions";
 import { DbNotice } from "@/components/DbNotice";
+import { GalleryBrowserUploader } from "@/components/GalleryBrowserUploader";
 import { GalleryClientInstructions, GalleryImageForm } from "@/components/GalleryAdminForms";
 import { requireAdmin } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
@@ -30,9 +31,10 @@ export default async function GalleryImagesPage({ params }: { params: Promise<{ 
   })
     .then((gallery) => ({ gallery, hasDb: true }))
     .catch(() => ({ gallery: null, hasDb: false }));
-  const local = result.gallery ? countLocalImages(result.gallery.slug) : null;
-  const r2Status = result.gallery && isR2Configured()
-    ? await listR2ObjectsByPrefix(`galleries/${result.gallery.slug}/`)
+  const gallery = result.gallery;
+  const local = gallery ? countLocalImages(gallery.slug) : null;
+  const r2Status = gallery && isR2Configured()
+    ? await listR2ObjectsByPrefix(`galleries/${gallery.slug}/`)
       .then((keys) => ({ configured: true, ok: true, count: keys.length }))
       .catch(() => ({ configured: true, ok: false, count: 0 }))
     : { configured: false, ok: false, count: 0 };
@@ -42,9 +44,9 @@ export default async function GalleryImagesPage({ params }: { params: Promise<{ 
       <p className="eyebrow">Admin</p>
       <h1 className="mt-3 text-4xl font-black">Gallery Images</h1>
       {!result.hasDb ? <div className="mt-6"><DbNotice area="gallery image admin" /></div> : null}
-      {result.gallery ? (
+      {gallery ? (
         <>
-          <p className="muted-copy mt-3">{result.gallery.title}</p>
+          <p className="muted-copy mt-3">{gallery.title}</p>
           <div className="mt-8 grid gap-5 lg:grid-cols-2">
             <section className="rounded-sm border border-[var(--border)] bg-[var(--card)] p-5">
               <h2 className="text-2xl font-black">Upload preparation</h2>
@@ -55,38 +57,43 @@ export default async function GalleryImagesPage({ params }: { params: Promise<{ 
                 </div>
                 <div>
                   <dt className="font-bold text-[var(--foreground)]">Current image count</dt>
-                  <dd>{result.gallery.images.length} database images / {local?.count ?? 0} local files</dd>
+                  <dd>{gallery.images.length} database images / {local?.count ?? 0} local files</dd>
                 </div>
                 <div>
                   <dt className="font-bold text-[var(--foreground)]">Current R2 status</dt>
-                  <dd>{r2Status.configured ? (r2Status.ok ? `${r2Status.count} objects found under galleries/${result.gallery.slug}/` : "R2 configured, but status could not be read.") : "R2 env vars are not available to this process."}</dd>
+                  <dd>{r2Status.configured ? (r2Status.ok ? `${r2Status.count} objects found under galleries/${gallery.slug}/` : "R2 configured, but status could not be read.") : "R2 env vars are not available to this process."}</dd>
                 </div>
               </dl>
               <div className="mt-4 rounded-sm border border-[var(--border)] bg-[var(--background)] p-4">
                 <p className="text-sm font-bold text-[var(--foreground)]">Recommended command</p>
-                <code className="mt-2 block break-all text-xs text-[var(--gold)]">npm run gallery:upload-r2 -- {result.gallery.slug} public/images/galleries/{result.gallery.slug}</code>
-                <p className="muted-copy mt-3 text-xs">Equivalent direct command: npx tsx scripts/upload-gallery-to-r2.ts {result.gallery.slug} public/images/galleries/{result.gallery.slug}</p>
+                <code className="mt-2 block break-all text-xs text-[var(--gold)]">npm run gallery:upload-r2 -- {gallery.slug} public/images/galleries/{gallery.slug}</code>
+                <p className="muted-copy mt-3 text-xs">Equivalent direct command: npx tsx scripts/upload-gallery-to-r2.ts {gallery.slug} public/images/galleries/{gallery.slug}</p>
               </div>
-              {result.gallery.slug === "ruth-afriyie-graduation-proofs" ? (
+              {gallery.slug === "ruth-afriyie-graduation-proofs" ? (
                 <p className="gold-notice mt-4 rounded-sm p-3 text-sm">Existing shortcut: npm run gallery:upload-r2:ruth-final</p>
               ) : null}
-              {result.gallery.slug === "deborah-bonful-birthday" ? (
+              {gallery.slug === "deborah-bonful-birthday" ? (
                 <p className="gold-notice mt-4 rounded-sm p-3 text-sm">Existing shortcut: npm run gallery:upload-r2:deborah-bday</p>
               ) : null}
             </section>
-            <GalleryClientInstructions gallery={result.gallery} />
+            <GalleryClientInstructions gallery={gallery} />
           </div>
 
           <div className="mt-8 grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
             <div>
-              <h2 className="mb-4 text-2xl font-black">Add image</h2>
-              <GalleryImageForm galleryId={result.gallery.id} />
+              <GalleryBrowserUploader galleryId={gallery.id} />
+              <h2 className="mb-4 mt-8 text-2xl font-black">Add image URL</h2>
+              <GalleryImageForm galleryId={gallery.id} />
             </div>
             <div className="grid gap-4">
-              {result.gallery.images.map((image) => (
+              {gallery.images.map((image) => (
                 <article key={image.id} className="surface-card grid gap-4 rounded-sm p-4 md:grid-cols-[180px_1fr]">
                   <div className="aspect-[4/3] overflow-hidden rounded-sm bg-black">
-                    <img src={image.imageUrl} alt={image.title || "Gallery image"} className="h-full w-full object-cover" />
+                    <img
+                      src={image.thumbnailKey ? `/api/admin/galleries/${gallery.id}/images/${image.id}/thumb` : image.thumbnailUrl || image.imageUrl}
+                      alt={image.title || "Gallery image"}
+                      className="h-full w-full object-cover"
+                    />
                   </div>
                   <div>
                     <p className="eyebrow">Sort {image.sortOrder} / {image.isDownloadable ? "Downloadable" : "No downloads"}</p>
@@ -104,7 +111,7 @@ export default async function GalleryImagesPage({ params }: { params: Promise<{ 
                   </div>
                 </article>
               ))}
-              {!result.gallery.images.length ? <p className="muted-copy rounded-sm border border-[var(--border)] p-6">No images have been added to this gallery yet.</p> : null}
+              {!gallery.images.length ? <p className="muted-copy rounded-sm border border-[var(--border)] p-6">No images have been added to this gallery yet.</p> : null}
             </div>
           </div>
         </>
