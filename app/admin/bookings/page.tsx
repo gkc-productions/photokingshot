@@ -17,9 +17,42 @@ function displayStatus(status: string) {
   return statuses.find(([value]) => value === status)?.[1] || status;
 }
 
-export default async function AdminBookingsPage() {
+function normalizeStatus(value?: string) {
+  const upper = value?.trim().toUpperCase();
+  return statuses.some(([status]) => status === upper) ? upper : "";
+}
+
+function normalizeSort(value?: string) {
+  return value === "oldest" ? "oldest" : "newest";
+}
+
+export default async function AdminBookingsPage({
+  searchParams
+}: {
+  searchParams: Promise<{ search?: string; status?: string; sort?: string }>;
+}) {
   await requireAdmin();
-  const result = await prisma.bookingInquiry.findMany({ orderBy: { createdAt: "desc" } })
+  const query = await searchParams;
+  const search = query.search?.trim() || "";
+  const status = normalizeStatus(query.status);
+  const sort = normalizeSort(query.sort);
+  const hasFilters = Boolean(search || status || sort !== "newest");
+  const result = await prisma.bookingInquiry.findMany({
+    where: {
+      ...(status ? { status } : {}),
+      ...(search
+        ? {
+            OR: [
+              { fullName: { contains: search, mode: "insensitive" as const } },
+              { email: { contains: search, mode: "insensitive" as const } },
+              { phone: { contains: search, mode: "insensitive" as const } },
+              { shootType: { contains: search, mode: "insensitive" as const } }
+            ]
+          }
+        : {})
+    },
+    orderBy: { createdAt: sort === "oldest" ? "asc" : "desc" }
+  })
     .then((inquiries) => ({ inquiries, hasDb: true }))
     .catch(() => ({ inquiries: [], hasDb: false }));
 
@@ -29,6 +62,34 @@ export default async function AdminBookingsPage() {
       <h1 className="mt-3 text-4xl font-black">Booking inquiries</h1>
       <p className="muted-copy mt-3 max-w-2xl">Track every inquiry without deleting history by default. Update status as each client moves through the booking workflow.</p>
       {!result.hasDb ? <div className="mt-6"><DbNotice area="booking inquiry admin" /></div> : null}
+
+      <form action="/admin/bookings" className="surface-card mt-8 grid gap-4 rounded-sm p-4 md:grid-cols-[1fr_180px_160px_auto_auto] md:items-end">
+        <label className="text-sm font-semibold text-[var(--muted)]">
+          Search
+          <input
+            name="search"
+            defaultValue={search}
+            placeholder="Name, email, phone, or session type"
+            className="mt-2 w-full rounded-sm border border-[var(--border)] px-3 py-3"
+          />
+        </label>
+        <label className="text-sm font-semibold text-[var(--muted)]">
+          Status
+          <select name="status" defaultValue={status} className="mt-2 w-full rounded-sm border border-[var(--border)] px-3 py-3">
+            <option value="">All statuses</option>
+            {statuses.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          </select>
+        </label>
+        <label className="text-sm font-semibold text-[var(--muted)]">
+          Sort
+          <select name="sort" defaultValue={sort} className="mt-2 w-full rounded-sm border border-[var(--border)] px-3 py-3">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+          </select>
+        </label>
+        <button className="gold-button min-h-12 rounded-sm px-4 py-3 text-sm font-black uppercase tracking-wide">Apply</button>
+        <a href="/admin/bookings" className="inline-flex min-h-12 items-center justify-center rounded-sm border border-[var(--border)] px-4 py-3 text-sm font-black uppercase tracking-wide hover:border-[var(--gold)] hover:text-[var(--gold)]">Clear</a>
+      </form>
 
       <div className="mt-8 grid gap-4">
         {result.inquiries.map((inquiry) => (
@@ -81,7 +142,11 @@ export default async function AdminBookingsPage() {
           </article>
         ))}
       </div>
-      {result.hasDb && !result.inquiries.length ? <p className="muted-copy mt-8">No booking inquiries yet.</p> : null}
+      {result.hasDb && !result.inquiries.length ? (
+        <p className="muted-copy mt-8 rounded-sm border border-[var(--border)] p-6">
+          {hasFilters ? "No booking inquiries match these filters." : "No booking inquiries yet."}
+        </p>
+      ) : null}
     </section>
   );
 }
