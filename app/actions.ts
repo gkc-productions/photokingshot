@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { clearAdminSession, setAdminSession } from "@/lib/admin-auth";
 import { sendAdminNotification, sendEmail } from "@/lib/email";
+import { createAdminBookingEmail, createClientBookingConfirmationEmail } from "@/lib/emailTemplates";
 import { setGalleryAccessCookie } from "@/lib/gallery-auth";
 import { prisma } from "@/lib/prisma";
 
@@ -30,13 +31,15 @@ export async function createBookingInquiry(_: unknown, formData: FormData) {
     return { ok: false, message: "Please complete every required field with valid contact details." };
   }
 
+  let createdAt = new Date();
   try {
-    await prisma.bookingInquiry.create({
+    const booking = await prisma.bookingInquiry.create({
       data: {
         ...parsed.data,
         preferredDate: parsed.data.preferredDate ? new Date(parsed.data.preferredDate) : null
       }
     });
+    createdAt = booking.createdAt;
   } catch {
     return {
       ok: false,
@@ -45,7 +48,7 @@ export async function createBookingInquiry(_: unknown, formData: FormData) {
   }
 
   try {
-    await sendBookingEmails(parsed.data);
+    await sendBookingEmails({ ...parsed.data, createdAt });
   } catch (error) {
     console.warn("Booking inquiry was stored, but email notification failed.", error instanceof Error ? error.message : "Unknown email error");
   }
@@ -54,69 +57,13 @@ export async function createBookingInquiry(_: unknown, formData: FormData) {
   return { ok: true, message: "Your inquiry was received. PhotoKingShot will follow up soon." };
 }
 
-function escapeHtml(value: string) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
-}
-
-function formatBookingText(data: z.infer<typeof bookingSchema>) {
-  return [
-    "New PhotoKingShot booking inquiry",
-    "",
-    `Name: ${data.fullName}`,
-    `Email: ${data.email}`,
-    `Phone: ${data.phone}`,
-    `Shoot type: ${data.shootType}`,
-    `Preferred date: ${data.preferredDate || "Flexible / not provided"}`,
-    `Location: ${data.location}`,
-    "",
-    "Message:",
-    data.message
-  ].join("\n");
-}
-
-function formatBookingHtml(data: z.infer<typeof bookingSchema>) {
-  const rows = [
-    ["Name", data.fullName],
-    ["Email", data.email],
-    ["Phone", data.phone],
-    ["Shoot type", data.shootType],
-    ["Preferred date", data.preferredDate || "Flexible / not provided"],
-    ["Location", data.location]
-  ];
-
-  return `
-    <div style="font-family: Arial, sans-serif; color: #111;">
-      <h1 style="margin: 0 0 16px;">New PhotoKingShot booking inquiry</h1>
-      <table style="border-collapse: collapse; width: 100%; max-width: 680px;">
-        <tbody>
-          ${rows
-            .map(
-              ([label, value]) => `
-                <tr>
-                  <th align="left" style="border-bottom: 1px solid #ddd; padding: 10px; width: 150px;">${escapeHtml(label)}</th>
-                  <td style="border-bottom: 1px solid #ddd; padding: 10px;">${escapeHtml(value)}</td>
-                </tr>
-              `
-            )
-            .join("")}
-        </tbody>
-      </table>
-      <h2 style="margin: 24px 0 8px;">Message</h2>
-      <p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(data.message)}</p>
-    </div>
-  `;
-}
-
-async function sendBookingEmails(data: z.infer<typeof bookingSchema>) {
+async function sendBookingEmails(data: z.infer<typeof bookingSchema> & { createdAt: Date }) {
+  const adminEmail = createAdminBookingEmail(data);
   const adminResult = await sendAdminNotification({
     replyTo: data.email,
-    subject: `New booking inquiry: ${data.fullName}`,
-    text: formatBookingText(data),
-    html: formatBookingHtml(data)
+    subject: adminEmail.subject,
+    text: adminEmail.text,
+    html: adminEmail.html
   });
 
   if (adminResult.skipped) {
@@ -124,21 +71,12 @@ async function sendBookingEmails(data: z.infer<typeof bookingSchema>) {
     return;
   }
 
+  const clientEmail = createClientBookingConfirmationEmail(data);
   const clientResult = await sendEmail({
     to: data.email,
-    subject: "PhotoKingShot received your booking inquiry",
-    text: [
-      `Hi ${data.fullName},`,
-      "",
-      "Thanks for contacting PhotoKingShot. Your booking inquiry was received, and we will follow up soon.",
-      "",
-      "Your inquiry:",
-      `Shoot type: ${data.shootType}`,
-      `Preferred date: ${data.preferredDate || "Flexible / not provided"}`,
-      `Location: ${data.location}`,
-      "",
-      data.message
-    ].join("\n")
+    subject: clientEmail.subject,
+    text: clientEmail.text,
+    html: clientEmail.html
   });
 
   if (clientResult.skipped) {

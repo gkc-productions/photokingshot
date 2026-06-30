@@ -4,6 +4,7 @@ type EmailAddress = string | string[];
 
 type SendEmailInput = {
   to?: EmailAddress;
+  from?: string;
   subject: string;
   text: string;
   html?: string;
@@ -89,7 +90,7 @@ export async function sendEmail(input: SendEmailInput): Promise<EmailResult> {
   });
 
   const result = await transporter.sendMail({
-    from: config.adminFrom,
+    from: input.from || config.adminFrom,
     to: input.to || config.adminTo,
     replyTo: input.replyTo || config.adminReplyTo,
     subject: input.subject,

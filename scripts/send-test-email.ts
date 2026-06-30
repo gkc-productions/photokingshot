@@ -1,12 +1,20 @@
 import { loadEnvConfig } from "@next/env";
 import { sendAdminNotification } from "../lib/email";
+import { createBrandedTestEmail } from "../lib/emailTemplates";
 
 loadEnvConfig(process.cwd());
 
 async function main() {
+  const email = createBrandedTestEmail({
+    fromAlias: process.env.ADMIN_EMAIL_FROM || "PhotoKingShot <admin@photokingshot.com>",
+    replyTo: process.env.ADMIN_EMAIL_REPLY_TO || "admin@photokingshot.com",
+    websiteUrl: "https://photokingshot.com"
+  });
+
   const result = await sendAdminNotification({
-    subject: "PhotoKingShot Email Test",
-    text: "This is a test email from the PhotoKingShot website using Gmail SMTP and the verified admin@photokingshot.com alias."
+    subject: email.subject,
+    text: email.text,
+    html: email.html
   });
 
   if (result.skipped) {
