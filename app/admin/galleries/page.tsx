@@ -11,8 +11,9 @@ function galleryType(gallery: { selectionMode: boolean; _count: { images: number
   return gallery.selectionMode ? "Proofing Gallery" : "Final Gallery";
 }
 
-export default async function AdminGalleriesPage() {
+export default async function AdminGalleriesPage({ searchParams }: { searchParams: Promise<{ deleted?: string; delete?: string }> }) {
   await requireAdmin();
+  const query = await searchParams;
   const result = await prisma.clientGallery.findMany({
     orderBy: { updatedAt: "desc" },
     include: { _count: { select: { images: true, selections: true } } }
@@ -31,6 +32,16 @@ export default async function AdminGalleriesPage() {
         <Link href="/admin/galleries/new" className="gold-button rounded-sm px-4 py-3 text-sm font-black">New Gallery</Link>
       </div>
       {!result.hasDb ? <div className="mt-6"><DbNotice area="client gallery admin" /></div> : null}
+      {query.deleted ? (
+        <p className="gold-notice mt-6 rounded-sm p-4 text-sm">
+          Deleted gallery <span className="font-mono font-bold">{query.deleted}</span> and its scoped gallery storage.
+        </p>
+      ) : null}
+      {query.delete === "not-found" ? (
+        <p className="mt-6 rounded-sm border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-100">
+          That gallery could not be found. Nothing was deleted.
+        </p>
+      ) : null}
 
       <div className="mt-8 overflow-x-auto rounded-sm border border-[var(--border)]">
         <table className="w-full min-w-[1100px] text-left text-sm">

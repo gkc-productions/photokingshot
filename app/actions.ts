@@ -5,9 +5,10 @@ import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { clearAdminSession, setAdminSession } from "@/lib/admin-auth";
+import { clearAdminSession, requireAdmin, setAdminSession } from "@/lib/admin-auth";
 import { sendAdminNotification, sendEmail } from "@/lib/email";
 import { createAdminBookingEmail, createClientBookingConfirmationEmail } from "@/lib/emailTemplates";
+import { deleteGalleryR2Objects, deleteLocalGalleryFolder } from "@/lib/gallery-storage";
 import { setGalleryAccessCookie } from "@/lib/gallery-auth";
 import { prisma } from "@/lib/prisma";
 
@@ -316,9 +317,39 @@ export async function resetClientGalleryPassword(formData: FormData) {
 }
 
 export async function deleteClientGallery(formData: FormData) {
-  await prisma.clientGallery.delete({ where: { id: String(formData.get("id")) } });
+  await requireAdmin();
+
+  const parsed = z.object({
+    id: requiredString,
+    confirmSlug: requiredString
+  }).parse(Object.fromEntries(formData));
+
+  const gallery = await prisma.clientGallery.findUnique({
+    where: { id: parsed.id },
+    select: { id: true, slug: true }
+  });
+
+  if (!gallery) {
+    redirect("/admin/galleries?delete=not-found");
+  }
+
+  if (parsed.confirmSlug !== gallery.slug) {
+    redirect(`/admin/galleries/${parsed.id}/edit?delete=slug-mismatch`);
+  }
+
+  await deleteGalleryR2Objects(gallery.slug);
+  await deleteLocalGalleryFolder(gallery.slug);
+
+  await prisma.$transaction([
+    prisma.gallerySelection.deleteMany({ where: { galleryId: gallery.id } }),
+    prisma.galleryImage.deleteMany({ where: { galleryId: gallery.id } }),
+    prisma.clientGallery.delete({ where: { id: gallery.id } })
+  ]);
+
   revalidatePath("/galleries");
-  redirect("/admin/galleries");
+  revalidatePath(`/galleries/${gallery.slug}`);
+  revalidatePath("/admin/galleries");
+  redirect(`/admin/galleries?deleted=${encodeURIComponent(gallery.slug)}`);
 }
 
 const galleryImageSchema = z.object({

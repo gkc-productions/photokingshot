@@ -1,5 +1,5 @@
 import type { ClientGallery, GalleryImage } from "@prisma/client";
-import { resetClientGalleryPassword, upsertClientGallery, upsertGalleryImage } from "@/app/actions";
+import { deleteClientGallery, resetClientGalleryPassword, upsertClientGallery, upsertGalleryImage } from "@/app/actions";
 
 const input = "mt-2 w-full rounded-sm border border-[var(--border)] px-3 py-3";
 const label = "text-sm font-semibold text-[var(--muted)]";
@@ -52,6 +52,30 @@ export function GalleryPasswordResetForm({ galleryId }: { galleryId: string }) {
       <label className={label}>New password<input name="password" type="password" required className={input} /></label>
       <p className="gold-notice rounded-sm p-3 text-sm">Copy this password now. It cannot be viewed later.</p>
       <button className="gold-button min-h-12 rounded-sm px-5 py-3 text-sm font-black uppercase tracking-wide">Reset Password</button>
+    </form>
+  );
+}
+
+export function DeleteClientGalleryForm({ gallery }: { gallery: Pick<ClientGallery, "id" | "slug" | "title"> }) {
+  return (
+    <form action={deleteClientGallery} className="grid gap-4 rounded-sm border border-red-500/40 bg-red-500/10 p-5">
+      <input type="hidden" name="id" value={gallery.id} />
+      <div>
+        <h2 className="text-2xl font-black text-red-200">Delete gallery</h2>
+        <p className="mt-2 text-sm leading-6 text-red-100">
+          This permanently deletes the gallery, image records, selections, and R2 files for this gallery only.
+        </p>
+      </div>
+      <div className="rounded-sm border border-red-400/30 bg-black/20 p-3 text-sm text-red-100">
+        Type <span className="font-mono font-black">{gallery.slug}</span> exactly to confirm deletion of <span className="font-bold">{gallery.title}</span>.
+      </div>
+      <label className="text-sm font-semibold text-red-100">
+        Confirm gallery slug
+        <input name="confirmSlug" required autoComplete="off" className="mt-2 w-full rounded-sm border border-red-400/40 bg-[var(--input)] px-3 py-3 text-[var(--input-foreground)]" />
+      </label>
+      <button className="min-h-12 rounded-sm border border-red-400/60 px-5 py-3 text-sm font-black uppercase tracking-wide text-red-100 hover:bg-red-500/20">
+        Permanently Delete Gallery
+      </button>
     </form>
   );
 }
