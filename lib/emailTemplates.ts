@@ -140,9 +140,8 @@ function baseHtml({
         <td align="center" style="padding: 28px 12px;">
           <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; max-width: 680px;">
             <tr>
-              <td style="background: ${brand.black}; padding: 26px 28px; border-radius: 8px 8px 0 0;">
-                <img src="${brand.logoUrl}" width="210" alt="PhotoKingShot" style="display: block; max-width: 210px; width: 100%; height: auto; margin: 0 0 14px;">
-                <div style="color: ${brand.gold}; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">${brand.subtitle}</div>
+              <td align="center" style="background: ${brand.black}; padding: 18px 28px; border-radius: 8px 8px 0 0;">
+                <img src="${brand.logoUrl}" width="260" alt="PhotoKingShot by GKC Productions" style="display: block; max-width: 260px; width: 100%; height: auto; margin: 0 auto;">
               </td>
             </tr>
             <tr>
