@@ -1,20 +1,12 @@
-import type { Metadata } from "next";
 import { Button } from "@/components/Button";
 import { SectionHeading } from "@/components/SectionHeading";
-import { site } from "@/lib/site";
+import { createSeoMetadata, site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata = createSeoMetadata({
   title: "Photography Packages",
   description: "Explore PhotoKingShot photography packages for Atlanta graduations, birthdays, church programs, events, family portraits, couples, and lifestyle sessions.",
-  alternates: {
-    canonical: "/pricing"
-  },
-  openGraph: {
-    title: "Photography Packages | PhotoKingShot",
-    description: "Request a quote for Atlanta photography packages with clean editing and private online gallery delivery.",
-    url: "https://photokingshot.com/pricing"
-  }
-};
+  path: "/pricing"
+});
 
 const packages = [
   {

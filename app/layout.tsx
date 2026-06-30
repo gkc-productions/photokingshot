@@ -1,29 +1,31 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { site } from "@/lib/site";
+import { seoImage, site } from "@/lib/site";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://photokingshot.com"),
+  metadataBase: new URL(site.url),
   title: {
-    default: "PhotoKingShot by GKC Productions",
+    default: site.fullName,
     template: "%s | PhotoKingShot"
   },
-  description: "Premium Atlanta-based portrait, event, graduation, church, community, and creative photography by GKC Productions.",
+  description: "Atlanta photographer for graduation photography, birthday photography, event photography, family portraits, and private client galleries.",
   alternates: {
     canonical: "/"
   },
   openGraph: {
-    title: "PhotoKingShot by GKC Productions",
-    description: "Premium Atlanta-based photography with a bold, modern eye.",
-    url: "https://photokingshot.com",
-    siteName: "PhotoKingShot",
+    title: site.fullName,
+    description: "Atlanta photographer for graduations, birthdays, events, portraits, and private online gallery delivery.",
+    url: site.url,
+    siteName: site.fullName,
+    images: [seoImage],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "PhotoKingShot by GKC Productions",
-    description: "Premium Atlanta-based photography with a bold, modern eye."
+    title: site.fullName,
+    description: "Atlanta photography with clean editing, confident direction, and private client galleries.",
+    images: [seoImage.url]
   },
   icons: {
     icon: site.logo.favicon,

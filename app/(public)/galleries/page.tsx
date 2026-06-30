@@ -1,20 +1,12 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { GalleryLoginForm } from "@/components/GalleryLoginForm";
-import { site } from "@/lib/site";
+import { createSeoMetadata, site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata = createSeoMetadata({
   title: "Client Galleries",
   description: "Access private PhotoKingShot client galleries for edited Atlanta photography sessions.",
-  alternates: {
-    canonical: "/galleries"
-  },
-  openGraph: {
-    title: "Client Galleries | PhotoKingShot",
-    description: "Private client gallery access for edited PhotoKingShot images.",
-    url: "https://photokingshot.com/galleries"
-  }
-};
+  path: "/galleries"
+});
 
 export default async function GalleriesPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const params = await searchParams;

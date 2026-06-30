@@ -1,22 +1,14 @@
-import type { Metadata } from "next";
 import { PortfolioCard } from "@/components/PortfolioCard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { prisma } from "@/lib/prisma";
-import { fallbackPortfolio } from "@/lib/site";
+import { createSeoMetadata, fallbackPortfolio } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = {
+export const metadata = createSeoMetadata({
   title: "Portfolio",
   description: "Explore PhotoKingShot portfolio work for Atlanta graduation portraits, birthday photos, events, church/community coverage, family sessions, and creative photography.",
-  alternates: {
-    canonical: "/portfolio"
-  },
-  openGraph: {
-    title: "Portfolio | PhotoKingShot",
-    description: "Atlanta photography portfolio organized by session type.",
-    url: "https://photokingshot.com/portfolio"
-  }
-};
+  path: "/portfolio"
+});
 
 const categoryOrder = ["Graduation", "Events", "Church/Community", "Portraits", "Creative"];
 

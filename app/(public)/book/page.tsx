@@ -1,20 +1,12 @@
-import type { Metadata } from "next";
 import { BookingForm } from "@/components/BookingForm";
 import { SectionHeading } from "@/components/SectionHeading";
-import { site } from "@/lib/site";
+import { createSeoMetadata, site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata = createSeoMetadata({
   title: "Book a Session",
   description: "Submit a PhotoKingShot booking inquiry for Atlanta graduation portraits, birthday photos, church and event coverage, family sessions, and creative shoots.",
-  alternates: {
-    canonical: "/booking"
-  },
-  openGraph: {
-    title: "Book a Session | PhotoKingShot",
-    description: "Send a booking inquiry for a polished Atlanta photography session with PhotoKingShot.",
-    url: "https://photokingshot.com/booking"
-  }
-};
+  path: "/booking"
+});
 
 export default function BookingPage() {
   return (

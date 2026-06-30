@@ -2,18 +2,14 @@ import { Button } from "@/components/Button";
 import { PortfolioCard } from "@/components/PortfolioCard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { prisma } from "@/lib/prisma";
-import { fallbackPortfolio, site } from "@/lib/site";
+import { createSeoMetadata, fallbackPortfolio, site } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
-export const metadata = {
-  title: "Atlanta Photography",
-  description: "PhotoKingShot by GKC Productions creates polished Atlanta graduation portraits, birthday photos, church and event coverage, family sessions, and private client galleries.",
-  openGraph: {
-    title: "PhotoKingShot by GKC Productions",
-    description: "Atlanta photography with confident direction, clean editing, fast delivery, and private online galleries.",
-    url: "https://photokingshot.com"
-  }
-};
+export const metadata = createSeoMetadata({
+  title: site.fullName,
+  description: "Atlanta photographer for graduation photography, birthday photography, church and event coverage, family portraits, and private client galleries.",
+  path: "/"
+});
 
 const services = [
   ["Graduation portraits", "Cap-and-gown sessions, campus portraits, family keepsakes, and announcement-ready images."],

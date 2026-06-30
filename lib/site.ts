@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
+
 export const site = {
   name: "PhotoKingShot",
   parent: "GKC Productions",
   fullName: "PhotoKingShot by GKC Productions",
   domain: "photokingshot.com",
+  url: "https://photokingshot.com",
   galleryDomain: "gallery.photokingshot.com",
   email: "admin@photokingshot.com",
   contactEmail: process.env.ADMIN_EMAIL || "admin@photokingshot.com",
@@ -17,6 +20,43 @@ export const site = {
     favicon: "/favicon.png"
   }
 };
+
+export const seoImage = {
+  url: "/brand/photokingshot-logo-full-dark.png",
+  alt: "PhotoKingShot by GKC Productions"
+};
+
+type SeoMetadataInput = {
+  title: string;
+  description: string;
+  path?: string;
+};
+
+export function createSeoMetadata({ title, description, path = "/" }: SeoMetadataInput): Metadata {
+  const url = new URL(path, site.url).toString();
+
+  return {
+    title: title === site.fullName ? { absolute: title } : title,
+    description,
+    alternates: {
+      canonical: path
+    },
+    openGraph: {
+      title: title === site.fullName ? title : `${title} | ${site.name}`,
+      description,
+      url,
+      siteName: site.fullName,
+      images: [seoImage],
+      type: "website"
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: title === site.fullName ? title : `${title} | ${site.name}`,
+      description,
+      images: [seoImage.url]
+    }
+  };
+}
 
 export const serviceOptions = [
   "Graduation shoots",

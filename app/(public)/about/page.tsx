@@ -1,20 +1,12 @@
-import type { Metadata } from "next";
 import { Button } from "@/components/Button";
 import { SectionHeading } from "@/components/SectionHeading";
-import { site } from "@/lib/site";
+import { createSeoMetadata, site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata = createSeoMetadata({
   title: "About",
   description: "Learn about PhotoKingShot, the Atlanta photography brand of GKC Productions for portraits, events, graduations, birthdays, and private galleries.",
-  alternates: {
-    canonical: "/about"
-  },
-  openGraph: {
-    title: "About PhotoKingShot",
-    description: "PhotoKingShot is the Atlanta-based photography brand of GKC Productions.",
-    url: "https://photokingshot.com/about"
-  }
-};
+  path: "/about"
+});
 
 export default function AboutPage() {
   return (

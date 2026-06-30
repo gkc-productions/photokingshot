@@ -1,19 +1,12 @@
-import type { Metadata } from "next";
 import { Button } from "@/components/Button";
 import { SectionHeading } from "@/components/SectionHeading";
+import { createSeoMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Services",
+export const metadata = createSeoMetadata({
+  title: "Photography Services",
   description: "Atlanta graduation portraits, birthday photos, church and event coverage, family and couple portraits, and creative photography by PhotoKingShot.",
-  alternates: {
-    canonical: "/services"
-  },
-  openGraph: {
-    title: "Photography Services | PhotoKingShot",
-    description: "Professional Atlanta photography for milestones, events, portraits, and private gallery delivery.",
-    url: "https://photokingshot.com/services"
-  }
-};
+  path: "/services"
+});
 
 const services = [
   ["Graduation portraits", "Campus, studio, cap-and-gown, family, and announcement-ready images for a milestone that deserves more than quick snapshots.", "Starting at $275"],
