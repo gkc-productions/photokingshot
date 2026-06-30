@@ -7,6 +7,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
+    "email:test": "tsx scripts/send-test-email.ts",
     "health:server": "bash scripts/server-health.sh",
     "generate:blog-drafts": "tsx scripts/generate-blog-drafts.ts",
     "gallery:convert-ruth-cr3": "tsx scripts/convert-cr3-to-jpg-proofs.ts",

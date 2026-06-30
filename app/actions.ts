@@ -6,8 +6,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { clearAdminSession, setAdminSession } from "@/lib/admin-auth";
+import { sendAdminNotification, sendEmail } from "@/lib/email";
 import { setGalleryAccessCookie } from "@/lib/gallery-auth";
-import { sendBookingNotification } from "@/lib/mail";
 import { prisma } from "@/lib/prisma";
 
 const requiredString = z.string().trim().min(1);
@@ -45,13 +45,105 @@ export async function createBookingInquiry(_: unknown, formData: FormData) {
   }
 
   try {
-    await sendBookingNotification(parsed.data);
+    await sendBookingEmails(parsed.data);
   } catch (error) {
-    console.error("Booking inquiry was stored, but SMTP notification failed.", error instanceof Error ? error.message : "Unknown SMTP error");
+    console.warn("Booking inquiry was stored, but email notification failed.", error instanceof Error ? error.message : "Unknown email error");
   }
 
   revalidatePath("/admin");
   return { ok: true, message: "Your inquiry was received. PhotoKingShot will follow up soon." };
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function formatBookingText(data: z.infer<typeof bookingSchema>) {
+  return [
+    "New PhotoKingShot booking inquiry",
+    "",
+    `Name: ${data.fullName}`,
+    `Email: ${data.email}`,
+    `Phone: ${data.phone}`,
+    `Shoot type: ${data.shootType}`,
+    `Preferred date: ${data.preferredDate || "Flexible / not provided"}`,
+    `Location: ${data.location}`,
+    "",
+    "Message:",
+    data.message
+  ].join("\n");
+}
+
+function formatBookingHtml(data: z.infer<typeof bookingSchema>) {
+  const rows = [
+    ["Name", data.fullName],
+    ["Email", data.email],
+    ["Phone", data.phone],
+    ["Shoot type", data.shootType],
+    ["Preferred date", data.preferredDate || "Flexible / not provided"],
+    ["Location", data.location]
+  ];
+
+  return `
+    <div style="font-family: Arial, sans-serif; color: #111;">
+      <h1 style="margin: 0 0 16px;">New PhotoKingShot booking inquiry</h1>
+      <table style="border-collapse: collapse; width: 100%; max-width: 680px;">
+        <tbody>
+          ${rows
+            .map(
+              ([label, value]) => `
+                <tr>
+                  <th align="left" style="border-bottom: 1px solid #ddd; padding: 10px; width: 150px;">${escapeHtml(label)}</th>
+                  <td style="border-bottom: 1px solid #ddd; padding: 10px;">${escapeHtml(value)}</td>
+                </tr>
+              `
+            )
+            .join("")}
+        </tbody>
+      </table>
+      <h2 style="margin: 24px 0 8px;">Message</h2>
+      <p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(data.message)}</p>
+    </div>
+  `;
+}
+
+async function sendBookingEmails(data: z.infer<typeof bookingSchema>) {
+  const adminResult = await sendAdminNotification({
+    replyTo: data.email,
+    subject: `New booking inquiry: ${data.fullName}`,
+    text: formatBookingText(data),
+    html: formatBookingHtml(data)
+  });
+
+  if (adminResult.skipped) {
+    console.warn(`Booking admin email skipped: ${adminResult.reason || "Email is not configured."}`);
+    return;
+  }
+
+  const clientResult = await sendEmail({
+    to: data.email,
+    subject: "PhotoKingShot received your booking inquiry",
+    text: [
+      `Hi ${data.fullName},`,
+      "",
+      "Thanks for contacting PhotoKingShot. Your booking inquiry was received, and we will follow up soon.",
+      "",
+      "Your inquiry:",
+      `Shoot type: ${data.shootType}`,
+      `Preferred date: ${data.preferredDate || "Flexible / not provided"}`,
+      `Location: ${data.location}`,
+      "",
+      data.message
+    ].join("\n")
+  });
+
+  if (clientResult.skipped) {
+    console.warn(`Booking client confirmation skipped: ${clientResult.reason || "Email is not configured."}`);
+  }
 }
 
 export async function updateBookingInquiryStatus(formData: FormData) {
