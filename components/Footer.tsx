@@ -15,6 +15,7 @@ export function Footer() {
         </div>
         <div className="flex flex-wrap gap-4 text-[var(--muted)] md:justify-end">
           <Link href="/privacy-policy" className="hover:text-[var(--gold)]">Privacy Policy</Link>
+          <Link href="/pricing" className="hover:text-[var(--gold)]">Pricing</Link>
           <Link href="/booking" className="hover:text-[var(--gold)]">Book a Session</Link>
           <Link href="/admin" className="hover:text-[var(--gold)]">Admin</Link>
         </div>
