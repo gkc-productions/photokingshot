@@ -38,7 +38,7 @@ export function Header() {
             <ThemeToggle />
           </div>
           <Link href="/booking" className="gold-button hidden rounded-sm border border-[var(--gold)] px-4 py-2 text-sm font-black uppercase tracking-wide transition sm:inline-flex">
-            Book a Shoot
+            Book a Session
           </Link>
           <button
             type="button"
@@ -60,7 +60,7 @@ export function Header() {
           ))}
           <ThemeToggle />
           <Link href="/booking" onClick={() => setOpen(false)} className="gold-button rounded-sm px-4 py-3 text-sm font-black uppercase tracking-wide">
-            Book a Shoot
+            Book a Session
           </Link>
         </nav>
       ) : null}

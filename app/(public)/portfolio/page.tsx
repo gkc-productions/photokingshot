@@ -2,35 +2,35 @@ import type { Metadata } from "next";
 import { PortfolioCard } from "@/components/PortfolioCard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { prisma } from "@/lib/prisma";
-import { placeholderPortfolio } from "@/lib/site";
+import { fallbackPortfolio } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Portfolio",
-  description: "Explore PhotoKingShot portfolio categories for portraits, events, graduation, church/community, and creative photography.",
+  description: "Explore PhotoKingShot portfolio work for Atlanta graduation portraits, birthday photos, events, church/community coverage, family sessions, and creative photography.",
   alternates: {
     canonical: "/portfolio"
   },
   openGraph: {
     title: "Portfolio | PhotoKingShot",
-    description: "Premium Atlanta photography portfolio organized by shoot type.",
+    description: "Atlanta photography portfolio organized by session type.",
     url: "https://photokingshot.com/portfolio"
   }
 };
 
-const categoryOrder = ["Portraits", "Events", "Graduation", "Church/Community", "Creative"];
+const categoryOrder = ["Graduation", "Events", "Church/Community", "Portraits", "Creative"];
 
 export default async function PortfolioPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
   const params = await searchParams;
   const items = await prisma.portfolioItem.findMany({ orderBy: { createdAt: "desc" } }).catch(() => []);
-  const source = items.length ? items : placeholderPortfolio;
+  const source = items.length ? items : fallbackPortfolio;
   const categories = ["All", ...categoryOrder];
   const selected = params.category || "All";
   const filtered = selected === "All" ? source : source.filter((item) => item.category === selected);
 
   return (
     <section className="section-shell py-16 md:py-24">
-      <SectionHeading eyebrow="Portfolio" title="PhotoKingShot work by shoot type." body="Browse portraits, events, graduations, church and community coverage, and creative projects in one organized portfolio." />
+      <SectionHeading eyebrow="Portfolio" title="PhotoKingShot work by session type." body="Browse graduation portraits, birthday and event coverage, church and community moments, family portraits, couple sessions, and creative projects in one organized portfolio." />
       <div className="mt-8 flex flex-wrap gap-2">
         {categories.map((category) => (
           <a key={category} href={category === "All" ? "/portfolio" : `/portfolio?category=${encodeURIComponent(category)}`} className={`rounded-sm border px-4 py-2 text-sm font-bold ${selected === category ? "border-[var(--gold)] bg-[var(--gold)] text-[var(--gold-foreground)]" : "border-[var(--border)] text-[var(--muted)] hover:border-[var(--gold)] hover:text-[var(--gold)]"}`}>
@@ -41,7 +41,7 @@ export default async function PortfolioPage({ searchParams }: { searchParams: Pr
       <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((item) => <PortfolioCard key={item.title} {...item} />)}
       </div>
-      {!filtered.length ? <p className="muted-copy mt-10">No items in this category yet. Add portfolio work from admin when client-approved images are ready.</p> : null}
+      {!filtered.length ? <p className="muted-copy mt-10">This category is being refreshed. Check back soon or book a session to talk through the look you want.</p> : null}
     </section>
   );
 }

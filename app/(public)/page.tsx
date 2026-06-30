@@ -2,31 +2,31 @@ import { Button } from "@/components/Button";
 import { PortfolioCard } from "@/components/PortfolioCard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { prisma } from "@/lib/prisma";
-import { placeholderPortfolio, site } from "@/lib/site";
+import { fallbackPortfolio, site } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Atlanta Photography",
-  description: "PhotoKingShot by GKC Productions creates premium Atlanta portraits, events, graduations, church/community coverage, and creative editorial photography.",
+  description: "PhotoKingShot by GKC Productions creates polished Atlanta graduation portraits, birthday photos, church and event coverage, family sessions, and private client galleries.",
   openGraph: {
     title: "PhotoKingShot by GKC Productions",
-    description: "Premium Atlanta photography with bold direction, clean production, and polished online delivery.",
+    description: "Atlanta photography with confident direction, clean editing, fast delivery, and private online galleries.",
     url: "https://photokingshot.com"
   }
 };
 
 const services = [
-  ["Portraits", "Personal branding, lifestyle images, and confident individual sessions with strong direction."],
-  ["Events", "Coverage for celebrations, launches, conferences, and private gatherings with clean story flow."],
-  ["Graduation", "Milestone portraits made for family, announcements, social, and the next chapter."],
-  ["Church + Community", "Respectful coverage for ministry moments, outreach, anniversaries, and community days."],
-  ["Creative Editorial", "Concept-driven visuals for artists, entrepreneurs, campaigns, and bold personal projects."]
+  ["Graduation portraits", "Cap-and-gown sessions, campus portraits, family keepsakes, and announcement-ready images."],
+  ["Birthday photos", "Clean, celebratory coverage for birthday dinners, parties, studio looks, and milestone moments."],
+  ["Church + events", "Respectful coverage for services, anniversaries, outreach, banquets, and community gatherings."],
+  ["Family + couples", "Warm portraits with clear direction, natural connection, and polished final edits."],
+  ["Creative portraits", "Editorial-style images for artists, entrepreneurs, brands, and personal projects."]
 ];
 
 const reasons = [
-  ["Atlanta aware", "Sessions shaped around the pace, neighborhoods, light, and energy of the city."],
-  ["Directed but natural", "Clear posing and production help without making people feel overworked."],
-  ["Delivery-minded", "Galleries are organized for sharing, downloading, and real client use."]
+  ["Atlanta aware", "Sessions are shaped around local venues, campuses, neighborhoods, light, and the pace of the day."],
+  ["Directed but natural", "You get posing help and production guidance without losing the personality of the moment."],
+  ["Fast, clean delivery", "Edited galleries are organized for easy viewing, sharing, downloading, and client use."]
 ];
 
 export default async function HomePage() {
@@ -35,7 +35,7 @@ export default async function HomePage() {
     orderBy: { createdAt: "desc" },
     take: 4
   }).catch(() => []);
-  const portfolio = featured.length ? featured : placeholderPortfolio;
+  const portfolio = featured.length ? featured : fallbackPortfolio;
 
   return (
     <>
@@ -53,10 +53,10 @@ export default async function HomePage() {
         <div className="section-shell relative flex min-h-[calc(100vh-64px)] items-center py-20">
           <div className="max-w-4xl">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--gold)]">{site.fullName}</p>
-            <h1 className="mt-5 text-5xl font-black leading-[0.95] tracking-tight text-white md:text-8xl">Atlanta photography with presence, polish, and power.</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/78">Portraits, events, graduations, church moments, and creative shoots built with a premium eye and a grounded production process.</p>
+            <h1 className="mt-5 text-5xl font-black leading-[0.95] tracking-tight text-white md:text-8xl">Atlanta photography with presence, polish, and purpose.</h1>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/78">Graduation portraits, birthday photos, church events, family sessions, and private galleries delivered with clean editing and confident direction.</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button href="/booking">Book a Shoot</Button>
+              <Button href="/booking">Book a Session</Button>
               <Button href="/portfolio" variant="heroOutline">View Portfolio</Button>
             </div>
           </div>
@@ -64,7 +64,7 @@ export default async function HomePage() {
       </section>
 
       <section className="section-shell py-20">
-        <SectionHeading eyebrow="Featured services" title="Clean direction, bold images, reliable delivery." body="PhotoKingShot keeps the experience focused: strong planning, calm direction on set, and final images with enough polish to represent you well." />
+        <SectionHeading eyebrow="Featured services" title="Clean direction, bold images, reliable delivery." body="PhotoKingShot keeps sessions focused and easy to move through: thoughtful planning, calm direction, clean edits, and galleries ready to share." />
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {services.map(([service, body]) => (
             <div key={service} className="surface-card rounded-sm p-5 transition hover:border-[var(--gold)]">
@@ -78,7 +78,7 @@ export default async function HomePage() {
 
       <section className="theme-band border-y py-20">
         <div className="section-shell">
-          <SectionHeading eyebrow="Portfolio preview" title="Recent work organized by shoot type." body="Browse portraits, events, graduations, community coverage, and creative sessions in a clean portfolio built for quick review." />
+          <SectionHeading eyebrow="Portfolio preview" title="Recent work organized by session type." body="Browse graduation portraits, event coverage, family and couple sessions, church moments, and creative portraits in one clean portfolio." />
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {portfolio.slice(0, 4).map((item) => <PortfolioCard key={item.title} {...item} />)}
           </div>
@@ -87,7 +87,7 @@ export default async function HomePage() {
       </section>
 
       <section className="section-shell py-20">
-        <SectionHeading eyebrow="Why PhotoKingShot" title="Premium does not have to feel distant." body="The work is polished, but the process stays personal. You get thoughtful planning, clear communication, and a photographer who knows how to move between portraits, moments, and the room around them." />
+        <SectionHeading eyebrow="Why PhotoKingShot" title="Professional work that still feels personal." body="The images are polished, but the process stays warm and straightforward. You get clear communication, practical planning, and a photographer who knows how to move between portraits, details, and the room around them." />
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {reasons.map(([title, body]) => (
             <div key={title} className="surface-card rounded-sm p-6">
@@ -101,15 +101,15 @@ export default async function HomePage() {
 
       <section className="section-shell grid gap-5 pb-20 md:grid-cols-3">
         {[
-          ["Client Galleries", "Edited galleries are delivered securely online with a clean path for clients to view and download.", "/galleries", "Gallery Delivery"],
-          ["Gear + Blog", "Photography tools, session prep notes, and practical equipment recommendations.", "/gear", "Resources"],
-          ["Ready to Shoot?", "Tell us the date, location, and creative direction. PhotoKingShot will help shape the session.", "/booking", "Booking"]
-        ].map(([title, body, href]) => (
+          ["Client Galleries", "Private galleries make it easy to view, download, and share your edited images after delivery.", "/galleries", "Access Client Gallery"],
+          ["View Portfolio", "See the range of PhotoKingShot work across graduations, portraits, events, and creative sessions.", "/portfolio", "View Portfolio"],
+          ["Ready to Book?", "Tell us the date, location, and occasion. PhotoKingShot will help shape the session from there.", "/booking", "Book a Session"]
+        ].map(([title, body, href, cta]) => (
           <div key={title} className="photo-sheen rounded-sm border border-[var(--border)] p-7">
             <p className="eyebrow">{href === "/booking" ? "Booking" : title}</p>
             <h2 className="text-2xl font-black">{title}</h2>
             <p className="muted-copy mt-3 min-h-14">{body}</p>
-            <Button href={href} className="mt-6">{href === "/booking" ? "Book a Shoot" : "Open"}</Button>
+            <Button href={href} className="mt-6">{cta}</Button>
           </div>
         ))}
       </section>

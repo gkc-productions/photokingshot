@@ -19,31 +19,32 @@ export const site = {
 };
 
 export const serviceOptions = [
-  "Portrait photography",
-  "Event photography",
   "Graduation shoots",
+  "Birthday photos",
   "Church/community events",
+  "Family/couple portraits",
+  "Event photography",
   "Creative/editorial shoots"
 ];
 
-export const placeholderPortfolio = [
+export const fallbackPortfolio = [
   {
-    title: "Westside Portrait Session",
-    category: "Portraits",
+    title: "Atlanta Graduation Portraits",
+    category: "Graduation",
     imageUrl: "visual:portraits",
-    description: "Confident portraits with clean direction, rich contrast, and an Atlanta city feel."
+    description: "Cap-and-gown portraits with confident direction, clean editing, and room for family moments."
   },
   {
-    title: "Community Celebration Coverage",
+    title: "Birthday Celebration Coverage",
     category: "Events",
     imageUrl: "visual:events",
-    description: "Candid coverage that catches arrivals, atmosphere, details, and the moments people talk about later."
+    description: "Candid and posed coverage for milestone birthdays, dinner parties, and celebration details."
   },
   {
-    title: "Graduation Milestone Shoot",
-    category: "Graduation",
+    title: "Family Portrait Session",
+    category: "Portraits",
     imageUrl: "visual:graduation",
-    description: "Polished cap-and-gown images built for family, announcements, and a proud next chapter."
+    description: "Warm portraits with natural connection, thoughtful posing, and polished final delivery."
   },
   {
     title: "Church Anniversary Moments",

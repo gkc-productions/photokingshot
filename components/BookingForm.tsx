@@ -29,7 +29,7 @@ export function BookingForm() {
         <input name="phone" required autoComplete="tel" className="mt-2 w-full rounded-sm border border-[var(--border)] px-3 py-3" />
       </label>
       <label className="text-sm font-semibold text-[var(--muted)]">
-        Shoot type
+        Session type
         <select name="shootType" required className="mt-2 w-full rounded-sm border border-[var(--border)] px-3 py-3">
           {serviceOptions.map((option) => (
             <option key={option}>{option}</option>
@@ -42,14 +42,14 @@ export function BookingForm() {
       </label>
       <label className="text-sm font-semibold text-[var(--muted)]">
         Location
-        <input name="location" required placeholder="Atlanta, venue, studio, or preferred area" className="mt-2 w-full rounded-sm border border-[var(--border)] px-3 py-3" />
+        <input name="location" required placeholder="Atlanta venue, campus, church, studio, or neighborhood" className="mt-2 w-full rounded-sm border border-[var(--border)] px-3 py-3" />
       </label>
       <label className="text-sm font-semibold text-[var(--muted)] md:col-span-2">
         Message
-        <textarea name="message" required rows={5} placeholder="Tell us the occasion, timing, look, and any must-have images." className="mt-2 w-full rounded-sm border border-[var(--border)] px-3 py-3" />
+        <textarea name="message" required rows={5} placeholder="Tell us the occasion, timing, preferred look, group size, and any must-have images." className="mt-2 w-full rounded-sm border border-[var(--border)] px-3 py-3" />
       </label>
       <button disabled={pending} className="gold-button min-h-12 rounded-sm px-5 py-3 text-sm font-black uppercase tracking-wide disabled:opacity-60 md:col-span-2">
-        {pending ? "Sending..." : "Submit Booking Inquiry"}
+        {pending ? "Sending..." : "Submit Session Inquiry"}
       </button>
     </form>
   );
