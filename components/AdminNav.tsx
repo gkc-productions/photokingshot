@@ -11,6 +11,7 @@ export function AdminNav() {
           <Link href="/admin/availability" className="hover:text-[var(--gold)]">Availability</Link>
           <Link href="/admin/blog" className="hover:text-[var(--gold)]">Blog</Link>
           <Link href="/admin/galleries" className="hover:text-[var(--gold)]">Client Galleries</Link>
+          <Link href="/admin/photo-book-requests" className="hover:text-[var(--gold)]">Photo Books</Link>
           <Link href="/admin/gear" className="hover:text-[var(--gold)]">Gear</Link>
           <Link href="/admin/portfolio" className="hover:text-[var(--gold)]">Portfolio</Link>
           <Link href="/" className="hover:text-[var(--gold)]">Public site</Link>

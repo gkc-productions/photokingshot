@@ -165,6 +165,40 @@ export async function deleteBookingAvailabilityBlock(formData: FormData) {
   redirect("/admin/availability?deleted=1");
 }
 
+
+const photoBookRequestSchema = z.object({
+  galleryId: z.string().trim().optional(),
+  clientName: requiredString,
+  clientEmail: z.string().trim().email(),
+  phone: z.string().trim().optional(),
+  packageType: requiredString,
+  photoCountRange: z.string().trim().optional(),
+  message: z.string().trim().optional(),
+  status: z.string().trim().optional()
+});
+
+export async function createPhotoBookRequest(formData: FormData) {
+  await requireAdmin();
+  const parsed = photoBookRequestSchema.parse(Object.fromEntries(formData));
+
+  await prisma.photoBookRequest.create({
+    data: {
+      galleryId: parsed.galleryId || null,
+      clientName: parsed.clientName,
+      clientEmail: parsed.clientEmail,
+      phone: parsed.phone || null,
+      packageType: parsed.packageType,
+      photoCountRange: parsed.photoCountRange || null,
+      message: parsed.message || null,
+      status: parsed.status || "New"
+    }
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/photo-book-requests");
+  redirect("/admin/photo-book-requests?created=1");
+}
+
 export async function loginAdmin(_: unknown, formData: FormData) {
   const password = String(formData.get("password") || "");
   if (!process.env.ADMIN_PASSWORD || password !== process.env.ADMIN_PASSWORD) {

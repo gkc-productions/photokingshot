@@ -28,6 +28,16 @@ export type BookingEmailData = {
   availabilityNote?: string;
 };
 
+
+export type PhotoBookPaymentEmailData = {
+  clientName: string;
+  clientEmail: string;
+  packageType: string;
+  amountCents?: number | null;
+  currency?: string | null;
+  paidAt?: Date | null;
+};
+
 type EmailTemplate = {
   subject: string;
   text: string;
@@ -313,6 +323,81 @@ export function createBrandedTestEmail({
       preview: "PhotoKingShot branded email test.",
       heading: "PhotoKingShot Email Test",
       intro: "If you are seeing this, branded emails are working.",
+      body: card(summaryTable(rows))
+    })
+  };
+}
+
+function formatMoney(amountCents?: number | null, currency = "usd") {
+  if (!amountCents) return "Not recorded";
+
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency.toUpperCase()
+  }).format(amountCents / 100);
+}
+
+export function createAdminPhotoBookPaymentReceivedEmail(data: PhotoBookPaymentEmailData): EmailTemplate {
+  const rows = [
+    { label: "Client name", value: data.clientName },
+    {
+      label: "Client email",
+      value: data.clientEmail,
+      htmlValue: `<a href="mailto:${escapeHtml(data.clientEmail)}" style="color: ${brand.dark}; font-weight: 700; text-decoration: underline;">${escapeHtml(data.clientEmail)}</a>`
+    },
+    { label: "Package", value: data.packageType },
+    { label: "Amount", value: formatMoney(data.amountCents, data.currency || "usd") },
+    { label: "Paid at", value: formatDateTime(data.paidAt || undefined) }
+  ];
+
+  const text = [
+    "PhotoKingShot Photo Book Payment Received",
+    "",
+    textRows(rows),
+    "",
+    "Next step: design and order the photo book through Printique."
+  ].join("\n");
+
+  return {
+    subject: `PhotoKingShot Photo Book Payment Received - ${data.clientName}`,
+    text,
+    html: baseHtml({
+      preview: `Photo book payment received from ${data.clientName}.`,
+      heading: "Photo Book Payment Received",
+      intro: "Stripe confirmed a photo book or album payment.",
+      body: card(`${summaryTable(rows)}<p style="margin: 22px 0 0; color: ${brand.text}; font-size: 15px; line-height: 1.7;">Next step: design and order the photo book through Printique.</p>`)
+    })
+  };
+}
+
+export function createClientPhotoBookPaymentConfirmationEmail(data: PhotoBookPaymentEmailData): EmailTemplate {
+  const rows = [
+    { label: "Package", value: data.packageType },
+    { label: "Amount", value: formatMoney(data.amountCents, data.currency || "usd") },
+    { label: "Paid at", value: formatDateTime(data.paidAt || undefined) }
+  ];
+
+  const text = [
+    "PhotoKingShot received your photo book payment",
+    "",
+    `Hi ${firstName(data.clientName)},`,
+    "",
+    "Thank you for your payment. PhotoKingShot will follow up with design/order next steps.",
+    "",
+    textRows(rows),
+    "",
+    "PhotoKingShot by GKC Productions",
+    brand.email,
+    brand.website
+  ].join("\n");
+
+  return {
+    subject: "PhotoKingShot received your photo book payment",
+    text,
+    html: baseHtml({
+      preview: "PhotoKingShot received your photo book payment.",
+      heading: "Payment Received",
+      intro: `Hi ${firstName(data.clientName)}, thank you for your payment. PhotoKingShot will follow up with design/order next steps.`,
       body: card(summaryTable(rows))
     })
   };

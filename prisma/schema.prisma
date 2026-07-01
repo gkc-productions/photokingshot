@@ -13,7 +13,7 @@ enum BlogStatus {
 }
 
 model BookingInquiry {
-  id            String   @id @default(cuid())
+  id            String    @id @default(cuid())
   fullName      String
   email         String
   phone         String
@@ -21,9 +21,9 @@ model BookingInquiry {
   preferredDate DateTime?
   location      String
   message       String
-  status        String   @default("NEW")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  status        String    @default("NEW")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model BookingAvailabilityBlock {
@@ -83,36 +83,64 @@ model PortfolioItem {
 }
 
 model ClientGallery {
-  id             String         @id @default(cuid())
-  title          String
-  slug           String         @unique
-  clientName     String
-  clientEmail    String?
-  sessionDate    DateTime?
-  description    String?
-  accessCode     String         @unique
-  passwordHash   String
-  isPublished    Boolean        @default(false)
-  allowDownloads Boolean        @default(true)
-  selectionMode  Boolean        @default(false)
-  maxSelections  Int?
+  id                   String             @id @default(cuid())
+  title                String
+  slug                 String             @unique
+  clientName           String
+  clientEmail          String?
+  sessionDate          DateTime?
+  description          String?
+  accessCode           String             @unique
+  passwordHash         String
+  isPublished          Boolean            @default(false)
+  allowDownloads       Boolean            @default(true)
+  selectionMode        Boolean            @default(false)
+  maxSelections        Int?
   selectionSubmittedAt DateTime?
-  selectionNotes String?
-  expiresAt      DateTime?
-  shareNote      String?
-  deliveryStatus String         @default("Draft")
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  images         GalleryImage[]
-  selections     GallerySelection[]
+  selectionNotes       String?
+  expiresAt            DateTime?
+  shareNote            String?
+  deliveryStatus       String             @default("Draft")
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  images               GalleryImage[]
+  selections           GallerySelection[]
+  photoBookRequests    PhotoBookRequest[]
 
   @@index([isPublished, slug])
   @@index([expiresAt])
   @@index([accessCode])
 }
 
+model PhotoBookRequest {
+  id                      String         @id @default(cuid())
+  galleryId               String?
+  gallery                 ClientGallery? @relation(fields: [galleryId], references: [id], onDelete: SetNull)
+  clientName              String
+  clientEmail             String
+  phone                   String?
+  packageType             String
+  photoCountRange         String?
+  message                 String?
+  status                  String         @default("New")
+  amountCents             Int?
+  currency                String         @default("usd")
+  stripeCheckoutSessionId String?
+  stripeCheckoutUrl       String?
+  stripePaymentIntentId   String?
+  paymentStatus           String         @default("Unpaid")
+  paidAt                  DateTime?
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+
+  @@index([galleryId])
+  @@index([paymentStatus])
+  @@index([stripeCheckoutSessionId])
+  @@index([stripePaymentIntentId])
+}
+
 model GalleryImage {
-  id             String        @id @default(cuid())
+  id             String             @id @default(cuid())
   galleryId      String
   imageUrl       String
   originalKey    String?
@@ -122,11 +150,11 @@ model GalleryImage {
   previewUrl     String?
   title          String?
   caption        String?
-  sortOrder      Int           @default(0)
-  isDownloadable Boolean       @default(true)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  gallery        ClientGallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+  sortOrder      Int                @default(0)
+  isDownloadable Boolean            @default(true)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  gallery        ClientGallery      @relation(fields: [galleryId], references: [id], onDelete: Cascade)
   selections     GallerySelection[]
 
   @@index([galleryId, sortOrder])

@@ -18,14 +18,16 @@ export default async function AdminDashboardPage() {
     prisma.clientGallery.count({ where: { selectionMode: false } }),
     prisma.portfolioItem.count(),
     prisma.blogPost.count(),
-    prisma.affiliateProduct.count()
+    prisma.affiliateProduct.count(),
+    prisma.photoBookRequest.count({ where: { paymentStatus: { not: "Paid" } } }),
+    prisma.photoBookRequest.count({ where: { paymentStatus: "Paid" } })
   ])
-    .then(([totalBookings, newBookings, totalGalleries, publishedGalleries, proofingGalleries, finalGalleries, portfolioItems, blogPosts, gearItems]) => ({
-      stats: { totalBookings, newBookings, totalGalleries, publishedGalleries, proofingGalleries, finalGalleries, portfolioItems, blogPosts, gearItems },
+    .then(([totalBookings, newBookings, totalGalleries, publishedGalleries, proofingGalleries, finalGalleries, portfolioItems, blogPosts, gearItems, unpaidPhotoBooks, paidPhotoBooks]) => ({
+      stats: { totalBookings, newBookings, totalGalleries, publishedGalleries, proofingGalleries, finalGalleries, portfolioItems, blogPosts, gearItems, unpaidPhotoBooks, paidPhotoBooks },
       hasDb: true
     }))
     .catch(() => ({
-      stats: { totalBookings: 0, newBookings: 0, totalGalleries: 0, publishedGalleries: 0, proofingGalleries: 0, finalGalleries: 0, portfolioItems: 0, blogPosts: 0, gearItems: 0 },
+      stats: { totalBookings: 0, newBookings: 0, totalGalleries: 0, publishedGalleries: 0, proofingGalleries: 0, finalGalleries: 0, portfolioItems: 0, blogPosts: 0, gearItems: 0, unpaidPhotoBooks: 0, paidPhotoBooks: 0 },
       hasDb: false
     }));
 
@@ -37,12 +39,15 @@ export default async function AdminDashboardPage() {
     ["Proofing galleries", result.stats.proofingGalleries],
     ["Final galleries", result.stats.finalGalleries],
     ["Total portfolio items", result.stats.portfolioItems],
-    ["Total blog posts", result.stats.blogPosts]
+    ["Total blog posts", result.stats.blogPosts],
+    ["Unpaid photo book requests", result.stats.unpaidPhotoBooks],
+    ["Paid photo book requests", result.stats.paidPhotoBooks]
   ] as const;
 
   const actions = [
     ["New Gallery", "/admin/galleries/new"],
     ["View Bookings", "/admin/bookings"],
+    ["Photo Book Requests", "/admin/photo-book-requests"],
     ["Add Portfolio Item", "/admin/portfolio/new"],
     ["Add Blog Post", "/admin/blog/new"],
     ...(result.stats.gearItems >= 0 ? ([["Add Gear Item", "/admin/gear/new"]] as const) : [])
