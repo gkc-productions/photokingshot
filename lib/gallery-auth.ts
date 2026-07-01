@@ -9,8 +9,13 @@ type GallerySessionInput = {
   passwordHash: string;
 };
 
-function secret() {
-  return process.env.ADMIN_PASSWORD || process.env.DATABASE_URL || "photokingshot-gallery-session";
+function getGallerySessionSecret() {
+  const secret = process.env.GALLERY_SESSION_SECRET?.trim() || process.env.SESSION_SECRET?.trim();
+  if (!secret) {
+    throw new Error("GALLERY_SESSION_SECRET or SESSION_SECRET is required for PhotoKingShot gallery session signing.");
+  }
+
+  return secret;
 }
 
 export function galleryCookieName(galleryId: string) {
@@ -18,7 +23,7 @@ export function galleryCookieName(galleryId: string) {
 }
 
 function signGalleryAccess(gallery: GallerySessionInput) {
-  return createHmac("sha256", secret())
+  return createHmac("sha256", getGallerySessionSecret())
     .update(`${gallery.id}:${gallery.slug}:${gallery.passwordHash}`)
     .digest("hex");
 }
