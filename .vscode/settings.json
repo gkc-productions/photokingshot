@@ -6,6 +6,7 @@
     "**/.npm/**": true,
     "**/.cache/**": true,
     "**/.vscode-server/**": true,
+    "**/.codex/**": true,
     "**/reference/**": true,
     "**/public/images/galleries/**": true,
     "**/public/audio/**": true,
@@ -18,6 +19,7 @@
     "**/.npm": true,
     "**/.cache": true,
     "**/.vscode-server": true,
+    "**/.codex": true,
     "**/reference": true,
     "**/public/images/galleries": true,
     "**/public/audio": true,
@@ -28,10 +30,15 @@
     "**/.next": true,
     "**/node_modules": true,
     "**/.npm": true,
-    "**/.cache": true
+    "**/.cache": true,
+    "**/.vscode-server": true,
+    "**/.codex": true
   },
   "typescript.tsserver.maxTsServerMemory": 1024,
   "typescript.disableAutomaticTypeAcquisition": true,
   "git.autorefresh": false,
-  "git.autoRepositoryDetection": false
+  "git.autoRepositoryDetection": false,
+  "git.detectSubmodules": false,
+  "npm.autoDetect": "off",
+  "search.followSymlinks": false
 }
