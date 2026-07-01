@@ -2,6 +2,7 @@ import Link from "next/link";
 import { toggleClientGalleryPublished } from "@/app/actions";
 import { DbNotice } from "@/components/DbNotice";
 import { requireAdmin } from "@/lib/admin-auth";
+import { formatGalleryExpiration, isGalleryExpired } from "@/lib/gallery-availability";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -9,6 +10,11 @@ export const dynamic = "force-dynamic";
 function galleryType(gallery: { selectionMode: boolean; _count: { images: number } }) {
   if (!gallery._count.images) return "Empty/Draft";
   return gallery.selectionMode ? "Proofing Gallery" : "Final Gallery";
+}
+
+function expirationLabel(gallery: { expiresAt: Date | null }) {
+  if (!gallery.expiresAt) return "No expiration";
+  return isGalleryExpired(gallery) ? "Expired" : `Expires on ${formatGalleryExpiration(gallery.expiresAt)}`;
 }
 
 const galleryStates = [
@@ -114,15 +120,18 @@ export default async function AdminGalleriesPage({
       </form>
 
       <div className="mt-8 overflow-x-auto rounded-sm border border-[var(--border)]">
-        <table className="w-full min-w-[1100px] text-left text-sm">
+        <table className="w-full min-w-[1250px] text-left text-sm">
           <thead className="bg-[var(--card-strong)] text-[var(--foreground)]">
             <tr>
-              {["Gallery", "Client", "Slug", "Access", "Images", "Status", "Downloads", "Proofing", "Actions"].map((head) => <th key={head} className="p-3">{head}</th>)}
+              {["Gallery", "Client", "Slug", "Access", "Images", "Status", "Delivery", "Expiration", "Downloads", "Proofing", "Actions"].map((head) => <th key={head} className="p-3">{head}</th>)}
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border)] text-[var(--muted)]">
-            {result.galleries.map((gallery) => (
-              <tr key={gallery.id} className="align-top">
+            {result.galleries.map((gallery) => {
+              const expired = isGalleryExpired(gallery);
+
+              return (
+              <tr key={gallery.id} className={`align-top ${expired ? "bg-red-500/5" : ""}`}>
                 <td className="p-3">
                   <p className="font-black text-[var(--foreground)]">{gallery.title}</p>
                   <p className="mt-1 rounded-sm border border-[var(--border)] px-2 py-1 text-xs font-black uppercase text-[var(--gold)]">{galleryType(gallery)}</p>
@@ -132,6 +141,8 @@ export default async function AdminGalleriesPage({
                 <td className="p-3 font-mono text-xs">{gallery.accessCode}</td>
                 <td className="p-3">{gallery._count.images}</td>
                 <td className="p-3">{gallery.isPublished ? "Published" : "Unpublished"}</td>
+                <td className="p-3">{gallery.deliveryStatus}</td>
+                <td className={`p-3 font-semibold ${expired ? "text-red-700 dark:text-red-200" : ""}`}>{expirationLabel(gallery)}</td>
                 <td className="p-3">{gallery.allowDownloads ? "Allowed" : "Off"}</td>
                 <td className="p-3">
                   {gallery.selectionMode ? `${gallery._count.selections} selected${gallery.selectionSubmittedAt ? " / submitted" : ""}` : "Off"}
@@ -150,7 +161,8 @@ export default async function AdminGalleriesPage({
                   </div>
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </div>

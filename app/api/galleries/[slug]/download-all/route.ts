@@ -5,6 +5,7 @@ import { PassThrough, Readable } from "stream";
 // @ts-expect-error ZipArchive is provided by the installed archiver package at runtime.
 import { ZipArchive } from "archiver";
 import { NextResponse } from "next/server";
+import { expiredGalleryMessage, isGalleryExpired } from "@/lib/gallery-availability";
 import { hasGalleryAccess } from "@/lib/gallery-auth";
 import { prisma } from "@/lib/prisma";
 import { getR2Object, isR2Configured } from "@/lib/r2";
@@ -55,6 +56,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ slug: stri
   }).catch(() => null);
 
   if (!gallery) return NextResponse.json({ error: "Gallery not found." }, { status: 404 });
+  if (isGalleryExpired(gallery)) return NextResponse.json({ error: expiredGalleryMessage }, { status: 403 });
   const allowed = await hasGalleryAccess(gallery);
   if (!allowed) return NextResponse.json({ error: "Gallery login required." }, { status: 401 });
   if (!gallery.allowDownloads) return NextResponse.json({ error: "Downloads are disabled for this gallery." }, { status: 403 });

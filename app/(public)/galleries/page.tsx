@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { GalleryLoginForm } from "@/components/GalleryLoginForm";
+import { expiredGalleryMessage } from "@/lib/gallery-availability";
 import { createSeoMetadata, site } from "@/lib/site";
 
 export const metadata = createSeoMetadata({
@@ -12,9 +13,11 @@ export default async function GalleriesPage({ searchParams }: { searchParams: Pr
   const params = await searchParams;
   const accessMessage = params.error === "login-required"
     ? "Please enter your gallery code and password before viewing that gallery."
-    : params.error === "not-found"
-      ? "That gallery is not available yet. Check your link or contact PhotoKingShot."
-      : "";
+    : params.error === "expired"
+      ? expiredGalleryMessage
+      : params.error === "not-found"
+        ? "That gallery is not available yet. Check your link or contact PhotoKingShot."
+        : "";
 
   return (
     <section className="section-shell grid gap-10 py-16 md:grid-cols-[1.05fr_0.95fr] md:py-24">

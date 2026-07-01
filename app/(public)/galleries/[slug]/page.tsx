@@ -3,6 +3,7 @@ import { existsSync } from "fs";
 import path from "path";
 import { redirect } from "next/navigation";
 import { GalleryLightbox } from "@/components/GalleryLightbox";
+import { isGalleryExpired } from "@/lib/gallery-availability";
 import { hasGalleryAccess } from "@/lib/gallery-auth";
 import { prisma } from "@/lib/prisma";
 
@@ -11,7 +12,11 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const gallery = await prisma.clientGallery.findFirst({
-    where: { slug, isPublished: true },
+    where: {
+      slug,
+      isPublished: true,
+      OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }]
+    },
     select: { title: true, description: true }
   }).catch(() => null);
 
@@ -34,6 +39,7 @@ export default async function ClientGalleryPage({ params }: { params: Promise<{ 
   }).catch(() => null);
 
   if (!gallery) redirect("/galleries?error=not-found");
+  if (isGalleryExpired(gallery)) redirect("/galleries?error=expired");
   const allowed = await hasGalleryAccess(gallery);
   if (!allowed) redirect("/galleries?error=login-required");
   const downloadableCount = gallery.images.filter((image) => gallery.allowDownloads && image.isDownloadable).length;
@@ -54,6 +60,12 @@ export default async function ClientGalleryPage({ params }: { params: Promise<{ 
             <span>{gallery.images.length} images</span>
           </div>
           {gallery.description ? <p className="muted-copy mt-5 max-w-3xl text-lg leading-8">{gallery.description}</p> : null}
+          {gallery.shareNote ? (
+            <div className="gold-notice mt-6 rounded-sm p-4 text-sm leading-6">
+              <p className="font-bold">Client note</p>
+              <p className="mt-2 whitespace-pre-wrap">{gallery.shareNote}</p>
+            </div>
+          ) : null}
           {proofingEnabled ? (
             <div className="gold-notice mt-6 rounded-sm p-4 text-sm">
               <p className="font-bold">Select up to {gallery.maxSelections || 20} images for editing.</p>

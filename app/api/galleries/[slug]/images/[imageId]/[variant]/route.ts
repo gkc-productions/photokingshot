@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { expiredGalleryMessage, isGalleryExpired } from "@/lib/gallery-availability";
 import { hasGalleryAccess } from "@/lib/gallery-auth";
 import { prisma } from "@/lib/prisma";
 import { createSignedR2DownloadUrl, createSignedR2ViewUrl, isR2Configured } from "@/lib/r2";
@@ -31,6 +32,10 @@ export async function GET(
 
   if (!gallery || !gallery.images[0]) {
     return NextResponse.json({ error: "Image not found." }, { status: 404 });
+  }
+
+  if (isGalleryExpired(gallery)) {
+    return NextResponse.json({ error: expiredGalleryMessage }, { status: 403 });
   }
 
   const allowed = await hasGalleryAccess(gallery);

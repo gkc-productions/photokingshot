@@ -98,12 +98,16 @@ model ClientGallery {
   maxSelections  Int?
   selectionSubmittedAt DateTime?
   selectionNotes String?
+  expiresAt      DateTime?
+  shareNote      String?
+  deliveryStatus String         @default("Draft")
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   images         GalleryImage[]
   selections     GallerySelection[]
 
   @@index([isPublished, slug])
+  @@index([expiresAt])
   @@index([accessCode])
 }
 

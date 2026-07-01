@@ -9,12 +9,14 @@ import { clearAdminSession, requireAdmin, setAdminSession } from "@/lib/admin-au
 import { sendAdminNotification, sendEmail } from "@/lib/email";
 import { createAdminBookingEmail, createClientBookingConfirmationEmail } from "@/lib/emailTemplates";
 import { deleteGalleryR2Objects, deleteLocalGalleryFolder } from "@/lib/gallery-storage";
+import { dateInputToExpiration, expiredGalleryMessage, isGalleryExpired } from "@/lib/gallery-availability";
 import { setGalleryAccessCookie } from "@/lib/gallery-auth";
 import { prisma } from "@/lib/prisma";
 
 const requiredString = z.string().trim().min(1);
 const formBoolean = z.preprocess((value) => value === "true" || value === "on", z.boolean());
 const bookingStatuses = ["NEW", "CONTACTED", "BOOKED", "COMPLETED", "ARCHIVED"] as const;
+const galleryDeliveryStatuses = ["Draft", "Proofing", "Final", "Delivered", "Expired"] as const;
 
 function dateInputToUtcDate(value: string) {
   return new Date(`${value}T00:00:00.000Z`);
@@ -303,6 +305,9 @@ const gallerySchema = z.object({
   clientEmail: z.string().trim().email().optional().or(z.literal("")),
   sessionDate: z.string().optional(),
   description: z.string().trim().optional(),
+  expiresAt: z.string().optional(),
+  shareNote: z.string().trim().optional(),
+  deliveryStatus: z.enum(galleryDeliveryStatuses).default("Draft"),
   accessCode: requiredString,
   password: z.string().optional(),
   isPublished: formBoolean.default(false),
@@ -326,6 +331,9 @@ export async function upsertClientGallery(formData: FormData) {
     clientEmail: parsed.clientEmail || null,
     sessionDate: parsed.sessionDate ? new Date(parsed.sessionDate) : null,
     description: parsed.description || null,
+    expiresAt: dateInputToExpiration(parsed.expiresAt),
+    shareNote: parsed.shareNote || null,
+    deliveryStatus: parsed.deliveryStatus,
     accessCode: parsed.accessCode.trim(),
     isPublished: parsed.isPublished,
     allowDownloads: parsed.allowDownloads,
@@ -471,6 +479,7 @@ export async function submitGallerySelections(_: unknown, formData: FormData) {
     include: { selections: true }
   }).catch(() => null);
   if (!gallery || !gallery.selectionMode || !gallery.isPublished) return { ok: false, message: "This proofing gallery is not available." };
+  if (isGalleryExpired(gallery)) return { ok: false, message: expiredGalleryMessage };
   if (gallery.selectionSubmittedAt) return { ok: false, message: "Your selections have already been submitted." };
 
   const selectedIds = parsed.data.imageIds.split(",").map((id) => id.trim()).filter(Boolean);
@@ -530,7 +539,7 @@ export async function loginClientGallery(_: unknown, formData: FormData) {
 
   const gallery = await prisma.clientGallery.findUnique({
     where: { accessCode: parsed.data.accessCode.trim() },
-    select: { id: true, slug: true, passwordHash: true, isPublished: true }
+    select: { id: true, slug: true, passwordHash: true, isPublished: true, expiresAt: true }
   }).catch(() => null);
 
   if (!gallery || !gallery.isPublished) {
@@ -540,6 +549,10 @@ export async function loginClientGallery(_: unknown, formData: FormData) {
   const valid = await bcrypt.compare(parsed.data.password, gallery.passwordHash);
   if (!valid) {
     return { ok: false, message: "That gallery code and password did not match." };
+  }
+
+  if (isGalleryExpired(gallery)) {
+    return { ok: false, message: expiredGalleryMessage };
   }
 
   await setGalleryAccessCookie(gallery);
