@@ -16,6 +16,10 @@ const requiredString = z.string().trim().min(1);
 const formBoolean = z.preprocess((value) => value === "true" || value === "on", z.boolean());
 const bookingStatuses = ["NEW", "CONTACTED", "BOOKED", "COMPLETED", "ARCHIVED"] as const;
 
+function dateInputToUtcDate(value: string) {
+  return new Date(`${value}T00:00:00.000Z`);
+}
+
 const bookingSchema = z.object({
   fullName: requiredString,
   email: z.string().trim().email(),
@@ -33,11 +37,27 @@ export async function createBookingInquiry(_: unknown, formData: FormData) {
   }
 
   let createdAt = new Date();
+  let availabilityNote: string | undefined;
   try {
+    const preferredDate = parsed.data.preferredDate ? dateInputToUtcDate(parsed.data.preferredDate) : null;
+    const matchingBlock = preferredDate
+      ? await prisma.bookingAvailabilityBlock.findFirst({
+          where: { date: preferredDate },
+          select: { title: true, isFullDay: true, startTime: true, endTime: true }
+        })
+      : null;
+
+    if (matchingBlock) {
+      const timeLabel = matchingBlock.isFullDay
+        ? "full day"
+        : [matchingBlock.startTime, matchingBlock.endTime].filter(Boolean).join("-") || "partial day";
+      availabilityNote = `Note: this preferred date matches an availability block (${matchingBlock.title}, ${timeLabel}).`;
+    }
+
     const booking = await prisma.bookingInquiry.create({
       data: {
         ...parsed.data,
-        preferredDate: parsed.data.preferredDate ? new Date(parsed.data.preferredDate) : null
+        preferredDate
       }
     });
     createdAt = booking.createdAt;
@@ -49,7 +69,7 @@ export async function createBookingInquiry(_: unknown, formData: FormData) {
   }
 
   try {
-    await sendBookingEmails({ ...parsed.data, createdAt });
+    await sendBookingEmails({ ...parsed.data, createdAt, availabilityNote });
   } catch (error) {
     console.warn("Booking inquiry was stored, but email notification failed.", error instanceof Error ? error.message : "Unknown email error");
   }
@@ -58,7 +78,7 @@ export async function createBookingInquiry(_: unknown, formData: FormData) {
   return { ok: true, message: "Your inquiry was received. PhotoKingShot will follow up soon." };
 }
 
-async function sendBookingEmails(data: z.infer<typeof bookingSchema> & { createdAt: Date }) {
+async function sendBookingEmails(data: z.infer<typeof bookingSchema> & { createdAt: Date; availabilityNote?: string }) {
   const adminEmail = createAdminBookingEmail(data);
   const adminResult = await sendAdminNotification({
     replyTo: data.email,
@@ -98,6 +118,49 @@ export async function updateBookingInquiryStatus(formData: FormData) {
 
   revalidatePath("/admin");
   revalidatePath("/admin/bookings");
+}
+
+const availabilityBlockSchema = z.object({
+  title: requiredString,
+  date: requiredString,
+  startTime: z.string().trim().optional(),
+  endTime: z.string().trim().optional(),
+  reason: z.string().trim().optional(),
+  isFullDay: formBoolean.default(false)
+});
+
+export async function createBookingAvailabilityBlock(formData: FormData) {
+  await requireAdmin();
+  const parsed = availabilityBlockSchema.parse(Object.fromEntries(formData));
+
+  await prisma.bookingAvailabilityBlock.create({
+    data: {
+      title: parsed.title,
+      date: dateInputToUtcDate(parsed.date),
+      isFullDay: parsed.isFullDay,
+      startTime: parsed.isFullDay ? null : parsed.startTime || null,
+      endTime: parsed.isFullDay ? null : parsed.endTime || null,
+      reason: parsed.reason || null
+    }
+  });
+
+  revalidatePath("/admin/availability");
+  revalidatePath("/admin/bookings");
+  revalidatePath("/booking");
+  redirect("/admin/availability?created=1");
+}
+
+export async function deleteBookingAvailabilityBlock(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id") || "");
+  if (!id) redirect("/admin/availability?delete=missing");
+
+  await prisma.bookingAvailabilityBlock.delete({ where: { id } });
+
+  revalidatePath("/admin/availability");
+  revalidatePath("/admin/bookings");
+  revalidatePath("/booking");
+  redirect("/admin/availability?deleted=1");
 }
 
 export async function loginAdmin(_: unknown, formData: FormData) {

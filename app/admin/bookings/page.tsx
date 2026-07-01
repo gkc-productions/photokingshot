@@ -26,6 +26,14 @@ function normalizeSort(value?: string) {
   return value === "oldest" ? "oldest" : "newest";
 }
 
+function dateKey(value: Date) {
+  return value.toISOString().slice(0, 10);
+}
+
+function dateInputToUtcDate(value: string) {
+  return new Date(`${value}T00:00:00.000Z`);
+}
+
 export default async function AdminBookingsPage({
   searchParams
 }: {
@@ -55,6 +63,19 @@ export default async function AdminBookingsPage({
   })
     .then((inquiries) => ({ inquiries, hasDb: true }))
     .catch(() => ({ inquiries: [], hasDb: false }));
+
+  const preferredDateKeys = Array.from(new Set(
+    result.inquiries
+      .map((inquiry) => inquiry.preferredDate ? dateKey(inquiry.preferredDate) : "")
+      .filter(Boolean)
+  ));
+  const availabilityBlocks = result.hasDb && preferredDateKeys.length
+    ? await prisma.bookingAvailabilityBlock.findMany({
+        where: { date: { in: preferredDateKeys.map(dateInputToUtcDate) } },
+        select: { date: true, title: true }
+      }).catch(() => [])
+    : [];
+  const blockedDateMap = new Map(availabilityBlocks.map((block) => [dateKey(block.date), block]));
 
   return (
     <section className="section-shell py-10">
@@ -92,13 +113,17 @@ export default async function AdminBookingsPage({
       </form>
 
       <div className="mt-8 grid gap-4">
-        {result.inquiries.map((inquiry) => (
+        {result.inquiries.map((inquiry) => {
+          const blockedDate = inquiry.preferredDate ? blockedDateMap.get(dateKey(inquiry.preferredDate)) : null;
+
+          return (
           <article key={inquiry.id} className="surface-card rounded-sm p-5">
             <div className="grid gap-4 lg:grid-cols-[1fr_220px]">
               <div>
                 <div className="flex flex-wrap items-center gap-3">
                   <h2 className="text-2xl font-black">{inquiry.fullName}</h2>
                   <span className="rounded-sm border border-[var(--border)] px-2 py-1 text-xs font-black uppercase text-[var(--gold)]">{displayStatus(inquiry.status)}</span>
+                  {blockedDate ? <span className="rounded-sm border border-red-400/40 bg-red-500/10 px-2 py-1 text-xs font-black uppercase text-red-700 dark:text-red-200">Blocked date</span> : null}
                 </div>
                 <p className="muted-copy mt-2 text-sm">
                   Created {inquiry.createdAt.toLocaleString()} / Shoot type: {inquiry.shootType}
@@ -140,7 +165,8 @@ export default async function AdminBookingsPage({
               </form>
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
       {result.hasDb && !result.inquiries.length ? (
         <p className="muted-copy mt-8 rounded-sm border border-[var(--border)] p-6">

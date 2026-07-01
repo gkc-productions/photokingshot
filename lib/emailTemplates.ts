@@ -25,6 +25,7 @@ export type BookingEmailData = {
   location: string;
   message: string;
   createdAt?: Date;
+  availabilityNote?: string;
 };
 
 type EmailTemplate = {
@@ -198,6 +199,7 @@ export function createAdminBookingEmail(data: BookingEmailData): EmailTemplate {
     },
     { label: "Shoot type", value: data.shootType },
     { label: "Preferred date", value: preferredDate },
+    ...(data.availabilityNote ? [{ label: "Availability note", value: data.availabilityNote }] : []),
     { label: "Location", value: data.location },
     { label: "Created", value: createdAt }
   ];
@@ -210,6 +212,7 @@ export function createAdminBookingEmail(data: BookingEmailData): EmailTemplate {
     "Message:",
     data.message,
     "",
+    ...(data.availabilityNote ? [data.availabilityNote, ""] : []),
     `View Booking Inquiries: ${brand.adminBookingsUrl}`
   ].join("\n");
 

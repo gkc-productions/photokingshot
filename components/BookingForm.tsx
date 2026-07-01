@@ -1,13 +1,29 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { createBookingInquiry } from "@/app/actions";
 import { serviceOptions } from "@/lib/site";
 
 const initialState = { ok: false, message: "" };
 
-export function BookingForm() {
+type AvailabilityBlock = {
+  date: string;
+  title: string;
+  isFullDay: boolean;
+  startTime?: string | null;
+  endTime?: string | null;
+};
+
+function blockTimeLabel(block: AvailabilityBlock) {
+  if (block.isFullDay) return "full day";
+  if (block.startTime && block.endTime) return `${block.startTime} - ${block.endTime}`;
+  return block.startTime || block.endTime || "part of the day";
+}
+
+export function BookingForm({ availabilityBlocks = [] }: { availabilityBlocks?: AvailabilityBlock[] }) {
   const [state, formAction, pending] = useActionState(createBookingInquiry, initialState);
+  const [preferredDate, setPreferredDate] = useState("");
+  const selectedBlock = availabilityBlocks.find((block) => block.date === preferredDate);
 
   return (
     <form action={formAction} className="grid gap-4 rounded-sm border border-[var(--border)] bg-[var(--card)] p-5 shadow-2xl shadow-black/20 md:grid-cols-2">
@@ -36,10 +52,26 @@ export function BookingForm() {
           ))}
         </select>
       </label>
-      <label className="text-sm font-semibold text-[var(--muted)]">
-        Preferred date
-        <input name="preferredDate" type="date" className="mt-2 w-full rounded-sm border border-[var(--border)] px-3 py-3" />
-      </label>
+      <div className="text-sm font-semibold text-[var(--muted)]">
+        <label htmlFor="preferredDate">Preferred date</label>
+        <input
+          id="preferredDate"
+          name="preferredDate"
+          type="date"
+          value={preferredDate}
+          onChange={(event) => setPreferredDate(event.target.value)}
+          aria-describedby="availability-note"
+          className="mt-2 w-full rounded-sm border border-[var(--border)] px-3 py-3"
+        />
+        <p id="availability-note" className="muted-copy mt-2 text-xs leading-5">
+          Dates listed as unavailable may require a different time. Final availability is confirmed after we review your inquiry.
+        </p>
+        {selectedBlock ? (
+          <p className="mt-2 rounded-sm border border-[var(--gold)] bg-[var(--gold)]/10 p-3 text-xs leading-5 text-[var(--foreground)]">
+            This date may already be unavailable: {selectedBlock.title} ({blockTimeLabel(selectedBlock)}). You can still submit your inquiry, and we will follow up with alternatives.
+          </p>
+        ) : null}
+      </div>
       <label className="text-sm font-semibold text-[var(--muted)]">
         Location
         <input name="location" required placeholder="Atlanta venue, campus, church, studio, or neighborhood" className="mt-2 w-full rounded-sm border border-[var(--border)] px-3 py-3" />

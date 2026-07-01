@@ -26,6 +26,20 @@ model BookingInquiry {
   updatedAt     DateTime @updatedAt
 }
 
+model BookingAvailabilityBlock {
+  id        String   @id @default(cuid())
+  title     String
+  date      DateTime @db.Date
+  startTime String?
+  endTime   String?
+  reason    String?
+  isFullDay Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date])
+}
+
 model BlogPost {
   id                String     @id @default(cuid())
   title             String

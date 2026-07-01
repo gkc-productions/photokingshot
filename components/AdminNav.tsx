@@ -8,6 +8,7 @@ export function AdminNav() {
         <Link href="/admin" className="font-black">PhotoKingShot Admin</Link>
         <nav className="flex flex-wrap items-center gap-4 text-sm text-[var(--muted)]">
           <Link href="/admin/bookings" className="hover:text-[var(--gold)]">Bookings</Link>
+          <Link href="/admin/availability" className="hover:text-[var(--gold)]">Availability</Link>
           <Link href="/admin/blog" className="hover:text-[var(--gold)]">Blog</Link>
           <Link href="/admin/galleries" className="hover:text-[var(--gold)]">Client Galleries</Link>
           <Link href="/admin/gear" className="hover:text-[var(--gold)]">Gear</Link>

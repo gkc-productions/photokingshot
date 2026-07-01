@@ -1,6 +1,9 @@
 import { BookingForm } from "@/components/BookingForm";
 import { SectionHeading } from "@/components/SectionHeading";
+import { prisma } from "@/lib/prisma";
 import { createSeoMetadata, site } from "@/lib/site";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = createSeoMetadata({
   title: "Book a Session",
@@ -8,7 +11,28 @@ export const metadata = createSeoMetadata({
   path: "/booking"
 });
 
-export default function BookingPage() {
+function startOfToday() {
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+  return today;
+}
+
+function dateKey(value: Date) {
+  return value.toISOString().slice(0, 10);
+}
+
+export default async function BookingPage() {
+  const availabilityBlocks = await prisma.bookingAvailabilityBlock.findMany({
+    where: { date: { gte: startOfToday() } },
+    select: { date: true, title: true, isFullDay: true, startTime: true, endTime: true },
+    orderBy: { date: "asc" }
+  })
+    .then((blocks) => blocks.map((block) => ({
+      ...block,
+      date: dateKey(block.date)
+    })))
+    .catch(() => []);
+
   return (
     <section className="section-shell grid gap-10 py-16 md:grid-cols-[0.9fr_1.1fr] md:py-24">
       <div>
@@ -18,7 +42,7 @@ export default function BookingPage() {
           <a href={`mailto:${site.contactEmail}`} className="font-semibold text-[var(--gold)] hover:text-[var(--foreground)]">{site.contactEmail}</a>.
         </p>
       </div>
-      <BookingForm />
+      <BookingForm availabilityBlocks={availabilityBlocks} />
     </section>
   );
 }
