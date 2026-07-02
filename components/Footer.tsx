@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/lib/site";
 
@@ -6,8 +7,8 @@ export function Footer() {
     <footer className="border-t border-[var(--border)] bg-[var(--background)] py-10">
       <div className="section-shell grid gap-6 text-sm text-[var(--muted)] md:grid-cols-[1.5fr_1fr]">
         <div>
-          <img src={site.logo.fullDark} alt={site.fullName} className="hidden h-16 w-auto dark:block" />
-          <img src={site.logo.fullLight} alt={site.fullName} className="h-16 w-auto dark:hidden" />
+          <Image src={site.logo.fullDark} alt={site.fullName} width={900} height={319} unoptimized className="hidden h-16 w-auto dark:block" />
+          <Image src={site.logo.fullLight} alt={site.fullName} width={900} height={319} unoptimized className="h-16 w-auto dark:hidden" />
           <p className="mt-4 max-w-xl text-[var(--muted)]">Atlanta-based photography for graduation portraits, birthday photos, church and event coverage, family sessions, couple portraits, and creative work, delivered with clean editing and private client galleries.</p>
           <p className="mt-3">
             <a href={`mailto:${site.contactEmail}`} className="font-semibold text-[var(--gold)] hover:text-[var(--foreground)]">{site.contactEmail}</a>

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { resetGallerySelections } from "@/app/actions";
 import { DbNotice } from "@/components/DbNotice";
 import { requireAdmin } from "@/lib/admin-auth";
@@ -42,8 +43,8 @@ export default async function GallerySelectionsPage({ params }: { params: Promis
           <div className="mt-8 grid gap-4">
             {result.gallery.selections.map((selection) => (
               <article key={selection.id} className="surface-card grid gap-4 rounded-sm p-4 md:grid-cols-[180px_1fr]">
-                <div className="aspect-[4/3] overflow-hidden rounded-sm bg-black">
-                  <img src={selection.image.imageUrl} alt={selection.image.title || "Selected proof"} className="h-full w-full object-cover" />
+                <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-black">
+                  <Image src={selection.image.imageUrl} alt={selection.image.title || "Selected proof"} fill sizes="180px" unoptimized className="h-full w-full object-cover" />
                 </div>
                 <div>
                   <p className="eyebrow">Selected {selection.createdAt.toLocaleString()}</p>

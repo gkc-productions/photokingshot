@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { site } from "@/lib/site";
@@ -23,8 +24,8 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--background)]/95 backdrop-blur">
       <div className="section-shell flex min-h-16 items-center justify-between gap-4 py-2.5">
         <Link href="/" className="flex items-center gap-3 leading-tight" aria-label={`${site.fullName} home`}>
-          <img src={site.logo.fullDark} alt="" className="hidden h-10 w-auto dark:block sm:h-11" />
-          <img src={site.logo.fullLight} alt="" className="h-10 w-auto dark:hidden sm:h-11" />
+          <Image src={site.logo.fullDark} alt="" width={900} height={319} unoptimized className="hidden h-10 w-auto dark:block sm:h-11" />
+          <Image src={site.logo.fullLight} alt="" width={900} height={319} unoptimized className="h-10 w-auto dark:hidden sm:h-11" />
           <span className="sr-only">{site.fullName}</span>
         </Link>
         <nav className="hidden items-center gap-5 text-sm text-[var(--muted)] lg:flex">

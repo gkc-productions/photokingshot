@@ -1,4 +1,5 @@
 import { existsSync, readdirSync } from "fs";
+import Image from "next/image";
 import path from "path";
 import { deleteGalleryImage } from "@/app/actions";
 import { DbNotice } from "@/components/DbNotice";
@@ -88,10 +89,13 @@ export default async function GalleryImagesPage({ params }: { params: Promise<{ 
             <div className="grid gap-4">
               {gallery.images.map((image) => (
                 <article key={image.id} className="surface-card grid gap-4 rounded-sm p-4 md:grid-cols-[180px_1fr]">
-                  <div className="aspect-[4/3] overflow-hidden rounded-sm bg-black">
-                    <img
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-black">
+                    <Image
                       src={image.thumbnailKey ? `/api/admin/galleries/${gallery.id}/images/${image.id}/thumb` : image.thumbnailUrl || image.imageUrl}
                       alt={image.title || "Gallery image"}
+                      fill
+                      sizes="180px"
+                      unoptimized
                       className="h-full w-full object-cover"
                     />
                   </div>

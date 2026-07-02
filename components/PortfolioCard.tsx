@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { clsx } from "clsx";
 
@@ -34,15 +35,18 @@ function VisualFallback({ title, category }: { title: string; category: string }
 
 export function PortfolioCard({ title, category, imageUrl, description }: PortfolioCardProps) {
   const [failed, setFailed] = useState(false);
-  const canUseImage = Boolean(imageUrl && !imageUrl.startsWith("visual:") && !failed);
+  const imageSrc = imageUrl && !imageUrl.startsWith("visual:") && !failed ? imageUrl : null;
 
   return (
     <article className="surface-card group overflow-hidden rounded-sm">
-      <div className="aspect-[4/5] overflow-hidden bg-neutral-900">
-        {canUseImage ? (
-          <img
-            src={imageUrl}
+      <div className="relative aspect-[4/5] overflow-hidden bg-neutral-900">
+        {imageSrc ? (
+          <Image
+            src={imageSrc}
             alt={title}
+            fill
+            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+            unoptimized
             onError={() => setFailed(true)}
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
           />

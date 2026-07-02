@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useActionState } from "react";
 import { clsx } from "clsx";
 import { submitGallerySelections } from "@/app/actions";
@@ -66,18 +67,18 @@ export function GalleryLightbox({ images, galleryTitle, galleryId, downloadAllUr
     setActiveIndex(index);
   }
 
-  function close() {
+  const close = useCallback(() => {
     setActiveIndex(null);
     setSlideshow(false);
-  }
+  }, []);
 
-  function previous() {
+  const previous = useCallback(() => {
     setActiveIndex((current) => current === null ? current : (current - 1 + images.length) % images.length);
-  }
+  }, [images.length]);
 
-  function next() {
+  const next = useCallback(() => {
     setActiveIndex((current) => current === null ? current : (current + 1) % images.length);
-  }
+  }, [images.length]);
 
   async function toggleMusic() {
     const audio = audioRef.current;
@@ -104,13 +105,13 @@ export function GalleryLightbox({ images, galleryTitle, galleryId, downloadAllUr
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [activeIndex, images.length]);
+  }, [activeIndex, close, next, previous]);
 
   useEffect(() => {
     if (!slideshow || activeIndex === null || images.length < 2) return;
     const timer = window.setInterval(next, 4000);
     return () => window.clearInterval(timer);
-  }, [slideshow, activeIndex, images.length]);
+  }, [slideshow, activeIndex, images.length, next]);
 
   useEffect(() => {
     document.body.style.overflow = activeIndex === null ? "" : "hidden";
@@ -172,8 +173,8 @@ export function GalleryLightbox({ images, galleryTitle, galleryId, downloadAllUr
       <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((image, index) => (
           <figure key={image.id} className={clsx("group relative overflow-hidden rounded-sm bg-black shadow-xl shadow-black/10", selectedIds.has(image.id) && "ring-4 ring-[#d9a93b]")}>
-            <button type="button" onClick={() => open(index)} className="block w-full text-left" aria-label={`Open ${image.title || galleryTitle}`}>
-              <img src={image.thumbnailUrl} alt={image.title || image.caption || galleryTitle} loading="lazy" className="aspect-[4/5] w-full bg-black object-cover transition duration-500 group-hover:scale-[1.025] group-hover:opacity-90" />
+            <button type="button" onClick={() => open(index)} className="relative block aspect-[4/5] w-full text-left" aria-label={`Open ${image.title || galleryTitle}`}>
+              <Image src={image.thumbnailUrl} alt={image.title || image.caption || galleryTitle} fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" unoptimized className="bg-black object-cover transition duration-500 group-hover:scale-[1.025] group-hover:opacity-90" />
               <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent p-4 opacity-0 transition group-hover:opacity-100">
                 <span className="block text-sm font-black text-white">{image.title || "View image"}</span>
                 {image.caption ? <span className="mt-1 block text-xs text-white/70">{image.caption}</span> : null}
@@ -242,7 +243,7 @@ export function GalleryLightbox({ images, galleryTitle, galleryId, downloadAllUr
                 </button>
               </>
             ) : null}
-            <img src={activeImage.previewUrl} alt={activeImage.title || activeImage.caption || galleryTitle} className="max-h-full max-w-full object-contain shadow-2xl shadow-black" />
+            <Image src={activeImage.previewUrl} alt={activeImage.title || activeImage.caption || galleryTitle} fill sizes="100vw" unoptimized className="object-contain shadow-2xl shadow-black" />
           </div>
 
           <div className="border-t border-white/10 px-4 py-4">
